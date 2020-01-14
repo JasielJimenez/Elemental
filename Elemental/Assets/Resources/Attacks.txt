@@ -1,0 +1,21 @@
+0
+Strike
+Hits multiple times for every five points of your speed that is higher than your opponent's speed.
+0
+false
+100
+0
+30
+30
+1
+
+1
+Elemental Slash
+Slash that uses elemental power to increase its range.
+30
+true
+80
+0
+80
+30
+1

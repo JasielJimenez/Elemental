@@ -1,0 +1,185 @@
+fileFormatVersion: 2
+guid: eb79b40a119d59c44915d09f8aca71cf
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Armature
+    100002: //RootNode
+    100004: Collar
+    100006: Hip_Back
+    100008: Hip_Front
+    100010: Hip_L
+    100012: Hip_R
+    100014: Lower_Arm_L
+    100016: Lower_Arm_L_end
+    100018: Lower_Arm_R
+    100020: Lower_Arm_R_end
+    100022: Lower_Body
+    100024: Lower_Head
+    100026: Lower_Jaw
+    100028: Lower_Jaw_end
+    100030: Lower_Leg_L
+    100032: Lower_Leg_L_end
+    100034: Lower_Leg_R
+    100036: Lower_Leg_R_end
+    100038: Middle_Leg_L
+    100040: Middle_Leg_R
+    100042: Neck
+    100044: Shoulder_L
+    100046: Shoulder_R
+    100048: Sphere.006
+    100050: Tail_1
+    100052: Tail_2
+    100054: Tail_3
+    100056: Tail_4
+    100058: Tail_4_end
+    100060: Upper_Arm_L
+    100062: Upper_Arm_R
+    100064: Upper_Body
+    100066: Upper_Head
+    100068: Upper_Jaw
+    100070: Upper_Jaw_end
+    100072: Upper_Leg_L
+    100074: Upper_Leg_R
+    400000: Armature
+    400002: //RootNode
+    400004: Collar
+    400006: Hip_Back
+    400008: Hip_Front
+    400010: Hip_L
+    400012: Hip_R
+    400014: Lower_Arm_L
+    400016: Lower_Arm_L_end
+    400018: Lower_Arm_R
+    400020: Lower_Arm_R_end
+    400022: Lower_Body
+    400024: Lower_Head
+    400026: Lower_Jaw
+    400028: Lower_Jaw_end
+    400030: Lower_Leg_L
+    400032: Lower_Leg_L_end
+    400034: Lower_Leg_R
+    400036: Lower_Leg_R_end
+    400038: Middle_Leg_L
+    400040: Middle_Leg_R
+    400042: Neck
+    400044: Shoulder_L
+    400046: Shoulder_R
+    400048: Sphere.006
+    400050: Tail_1
+    400052: Tail_2
+    400054: Tail_3
+    400056: Tail_4
+    400058: Tail_4_end
+    400060: Upper_Arm_L
+    400062: Upper_Arm_R
+    400064: Upper_Body
+    400066: Upper_Head
+    400068: Upper_Jaw
+    400070: Upper_Jaw_end
+    400072: Upper_Leg_L
+    400074: Upper_Leg_R
+    2100000: No Name
+    4300000: Sphere.006
+    7400000: Armature|ArmatureAction
+    7400002: Armature|Attack
+    7400004: Armature|Death.001
+    7400006: Armature|Flinch
+    7400008: Armature|Death
+    7400010: Armature|Idle
+    7400012: Armature|Roar
+    7400014: Armature|Run_End
+    7400016: Armature|Run_Loop
+    7400018: Armature|Run_Start
+    7400020: Armature|Tail_Slap
+    7400022: Armature|Walk_End
+    7400024: Armature|Walk_Loop
+    7400026: Armature|Walk_Start
+    9500000: //RootNode
+    13700000: Sphere.006
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
