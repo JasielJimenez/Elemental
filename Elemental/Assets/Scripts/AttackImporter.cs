@@ -22,22 +22,23 @@ public class AttackImporter : MonoBehaviour
 
     public void readTextFile()
     {
-        textArray = textAsset.text.Split ('\n').ToList();
+        textArray = textAsset.text.Split (',').ToList();
         //Debug.Log(textArray.Count);
         for(int i = 0; i < textArray.Count; i = i + 11) 
         {
             //Debug.Log("|" + textArray[i] + "|");
             Attack attackData = new Attack();
-            attackData.attackIndex = int.Parse(textArray[i]);
-            attackData.attackName = textArray[i + 1];
-            attackData.attackInfo = textArray[i + 2];
-            attackData.addedDamage = int.Parse(textArray[i + 3]);
-            attackData.elementDamage = (textArray[i + 4] == "true");
-            attackData.accuracy = int.Parse(textArray[i + 5]);
-            attackData.addedFocus = int.Parse(textArray[i + 6]);
-            attackData.attackRangeX = int.Parse(textArray[i + 7]);
-            attackData.attackRangeY = int.Parse(textArray[i + 8]);
-            attackData.attackTime = int.Parse(textArray[i + 9]);
+            attackData.AttackIndex = int.Parse(textArray[i]);
+            attackData.AttackName = textArray[i + 1];
+            attackData.AttackInfo = textArray[i + 2];
+            attackData.AddedDamage = int.Parse(textArray[i + 3]);
+            attackData.ElementDamage = int.Parse(textArray[i + 4]);
+            //attackData.elementDamage = (textArray[i + 4] == "true");
+            attackData.Accuracy = int.Parse(textArray[i + 5]);
+            attackData.AddedFocus = int.Parse(textArray[i + 6]);
+            //attackData.attackRangeX = int.Parse(textArray[i + 7]);
+            //attackData.attackRangeY = int.Parse(textArray[i + 8]);
+            //attackData.attackTime = int.Parse(textArray[i + 9]);
             attackDatabase.Add(attackData);
             //Debug.Log(attackDatabase.Count);
         }

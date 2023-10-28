@@ -11,8 +11,8 @@ public class CharacterAttacks : MonoBehaviour
     public int attackFourPick;
     public int attackFivePick;
     public float attackUsed;
-    public Attack attackOne;
-    public Attack attackTwo;
+    public Attack AttackOne;
+    public Attack AttackTwo;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,8 +38,8 @@ public class CharacterAttacks : MonoBehaviour
 
     public void buildMovePool()
     {
-        attackOne = attackDatabase.GetComponent<AttackImporter>().attackDatabase[attackOnePick];
-        attackTwo = attackDatabase.GetComponent<AttackImporter>().attackDatabase[attackTwoPick];
+        AttackOne = attackDatabase.GetComponent<AttackImporter>().attackDatabase[attackOnePick];
+        AttackTwo = attackDatabase.GetComponent<AttackImporter>().attackDatabase[attackTwoPick];
     }
 
     // Update is called once per frame

@@ -5,17 +5,22 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
-    public string characterName;
-    public string elementalAttribute;
-    public Stat maxHealth;
-    public Stat currHealth;
-    public Stat attack;
-    public Stat element;
-    public Stat defense;
-    public Stat evasion;
-    public Stat stance;
-    public Stat focus;
-    public Stat speed;
+    public string CharacterName;
+    public ElementType ElementalAttribute;
+    public Stat MaxHealth;
+    public Stat CurrHealth;
+    public Stat Attack;
+    public Stat ElementAttack;
+    public Stat Defense;
+    public Stat Evasion;
+    public Stat MaxStance;
+    public Stat CurrStance;
+    public Stat Focus;
+    public Stat Speed;
+    public Stat MaxStamina;
+    public Stat CurrStamina;
+    public Stat MaxElement;
+    public Stat CurrElement;
     //----------------------------------------------------------------------
     public Stat fireDef;
     public Stat waterDef;
@@ -45,53 +50,64 @@ public class CharacterStats : MonoBehaviour
     public Stat nullRes;
     public Stat lunarRes;
     //----------------------------------------------------------------------
-    public Stat walkRange;
-    public GameObject gameManager;
-    public GameObject attackManager;
-    public Attack incomingAttack;
-    private GameObject walkCircle;
-    public GameObject opponent;
-    public float damage;
-    public bool hasAttacked;
+    public Stat WalkRange;
+    //public GameObject gameManager;
+    //public GameObject attackManager;
+    //public Attack IncomingAttack;
+    //private GameObject WalkCircle;
+    //public GameObject Opponent;
+    public bool HasActed;
+    public bool HasWalked;
     //public GameObject
+    //public List<StatNames> AllStatChanges = new List<StatChange>();
+    //public List<Attack> AttackList = new List<Attack>();
+    public List<StatChange> AllStatChanges = new List<StatChange>();
+    public Dictionary<string,int> EnmityList = new Dictionary<string,int>();
+    public string PriorityTarget = "";
+    public int HighestEnmity = 0;
+
+    //public List<> EnmityList = new List<List>
 
     void Awake()
     {
         //currHealth = maxHealth;
-        gameManager = GameObject.Find("Gamemanager");
-        hasAttacked = false;
+        //gameManager = GameObject.Find("Gamemanager");
+        HasActed = false;
         //Debug.Log(hasAttacked);
     }
 
+/*
+    //HANDLES HITTING/ HIT BY ENEMY
     void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Enemy")
         {
             //MAKE THIS ONLY APPLY TO THE PLAYER
-            currHealth.updateStat(-5.0f);
-            gameManager.GetComponent<Gamemanager>().updateHealthBar(true);
+            CurrHealth.UpdateCurrStat(-5.0f);
+            //gameManager.GetComponent<Gamemanager>().updateHealthBar(true);
         }
         else if(other.gameObject.tag == "PlayerAttack" && gameObject.tag == "Enemy")
         {
             Debug.Log("HIT");
-            opponent = other.transform.parent.Find("Stats").gameObject;
-            incomingAttack = attackManager.GetComponent<useAttack>().attackUsed;
-            float enemyAttackPower = incomingAttack.addedDamage + opponent.GetComponent<CharacterStats>().attack.GetStat();
-            moveEffects(incomingAttack, enemyAttackPower, opponent);
-            float damage = enemyAttackPower - defense.GetStat();
-            if((damage > 0) && (incomingAttack.accuracy > evasion.GetStat()) && (currHealth.GetStat() > 0))
+            Opponent = other.transform.parent.Find("Stats").gameObject;
+            //incomingAttack = attackManager.GetComponent<useAttack>().attackUsed;
+            float enemyAttackPower = IncomingAttack.addedDamage + Opponent.GetComponent<CharacterStats>().Attack.GetCurrStat();
+            MoveEffects(IncomingAttack, enemyAttackPower, Opponent);
+            float damage = enemyAttackPower - Defense.GetCurrStat();
+            if((damage > 0) && (IncomingAttack.accuracy > Evasion.GetCurrStat()) && (CurrHealth.GetCurrStat() > 0))
             {
-                currHealth.updateStat(-damage);
-                gameManager.GetComponent<Gamemanager>().updateHealthBar(false); 
+                CurrHealth.UpdateCurrStat(-damage);
+                //gameManager.GetComponent<Gamemanager>().updateHealthBar(false); 
             }
         }
     }
 
-    public void moveEffects(Attack attackUsed, float enemyPower, GameObject attacker)
+    //HANDLES BASIC ATTACK
+    public void MoveEffects(Attack attackUsed, float enemyPower, GameObject attacker)
     {
         if(attackUsed.attackIndex == 0)
         {
-            float speedDiff = attacker.GetComponent<CharacterStats>().speed.GetStat() - speed.GetStat();
+            float speedDiff = attacker.GetComponent<CharacterStats>().Speed.GetCurrStat() - Speed.GetCurrStat();
             if(speedDiff > 0)
             {
                 float numHits = speedDiff / 5;
@@ -100,9 +116,102 @@ public class CharacterStats : MonoBehaviour
             }
             return;
         }
-        if(attackUsed.elementDamage == true)
-        {
+    }
+*/
 
+    public void HandleStatChanges(StatChange incomingStatChange)
+    {
+        //StatChange test = new StatChange();
+        //test.SetNumChange(change);
+        //test.SetChangeDuration(duration);
+        //test.SetIsPercentChange(isPercentage);
+        //ChangeStat(test.GetNumChange(), statName);
+        AllStatChanges.Add(incomingStatChange);
+
+        //MAKE STAT CHANGE TEMPORARY *****
+        //Handle in TurnOrder.cs?
+
+        Debug.Log("All Stat Changes size: " + AllStatChanges.Count);
+
+        ChangeStat(incomingStatChange.GetNumChange(), incomingStatChange.GetStatName());
+    }
+
+    public void UpdateEnmityList(string opponentName, int enmityAdded)
+    {
+        int value = 0;
+        if(EnmityList.TryGetValue(opponentName, out value))
+        {
+            Debug.Log("ENMITY VALUE: " + value);
+            value += enmityAdded;
+            EnmityList[opponentName] = value;
+        }
+        else
+        {
+            EnmityList.Add(opponentName, enmityAdded);
+            value = enmityAdded;
+        }
+
+        if(value >= HighestEnmity)
+        {
+            HighestEnmity = value;
+            PriorityTarget = opponentName;
+        }
+        else
+        {
+            Debug.Log("VALUE: " + value + ", HIGHESTENMITY: " + HighestEnmity + ", OPPONENTNAME: " + opponentName + ", PRIORITYTARGET: " + PriorityTarget);
+        }
+    }
+
+    public void ChangeStat(int statChange, string statName)
+    {
+        switch(statName)
+        {
+            case "MaxHealth":
+                MaxHealth.UpdateCurrStat(statChange);
+            break;
+            case "CurrentHealth":
+                CurrHealth.UpdateCurrStat(statChange);
+            break;
+            case "Attack":
+            Debug.Log("Changing Attack Stat");
+                Attack.UpdateCurrStat(statChange);
+            break;
+            case "ElementAttack":
+                ElementAttack.UpdateCurrStat(statChange);
+            break;
+            case "Defense":
+                Defense.UpdateCurrStat(statChange);
+            break;
+            case "Evasion":
+                Evasion.UpdateCurrStat(statChange);
+            break;
+            case "MaxStance":
+                MaxStance.UpdateCurrStat(statChange);
+            break;
+            case "CurrStance":
+                CurrStance.UpdateCurrStat(statChange);
+            break;
+            case "Focus":
+                Focus.UpdateCurrStat(statChange);
+            break;
+            case "Speed":
+                Speed.UpdateCurrStat(statChange);
+            break;
+            case "MaxStamina":
+                MaxStamina.UpdateCurrStat(statChange);
+            break;
+            case "CurrentStamina":
+                CurrStamina.UpdateCurrStat(statChange);
+            break;
+            case "MaxElement":
+                MaxElement.UpdateCurrStat(statChange);
+            break;
+            case "CurrentElement":
+                CurrElement.UpdateCurrStat(statChange);
+            break;
+            default:
+                Debug.Log("Invalid stat name given to be changed");
+            break;
         }
     }
 

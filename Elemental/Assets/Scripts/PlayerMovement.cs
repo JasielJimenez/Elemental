@@ -9,14 +9,17 @@ public class PlayerMovement : MonoBehaviour
     public float Jumpspeed = 8.0f;
     public float Rotatespeed = 3.0f;
     public float Gravity = 20.0f;
+    public float Movementspeed = 1.0f;
     public bool walkActive = false;
     public GameObject cam;
     public GameObject walkCircle;
-    //private Vector3 moveDirection = Vector3.zero;
+    private Vector3 moveDirection = Vector3.zero;
+    private CharacterController Controller;
     // Start is called before the first frame update
     void Start()
     {
-        walkCircle.SetActive(false);
+        //walkCircle.SetActive(false);
+        Controller = GetComponent<CharacterController>();
         cam = GameObject.Find("CameraBody");
     }
 
@@ -25,25 +28,25 @@ public class PlayerMovement : MonoBehaviour
     {
         if(walkActive == true)
         {
-            playerMove();
-            //CharacterController controller = GetComponent<CharacterController>();
-            //if (controller.isGrounded)
-            //{
-            //    moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            //    moveDirection = transform.TransformDirection(moveDirection);
-            //    moveDirection *= Movementspeed;
-            //    if (Input.GetButton("Jump"))
-            //    {
-            //        moveDirection.y = Jumpspeed;
-            //    }
-            //}
-            //moveDirection.y -= Gravity * Time.deltaTime;
-            //controller.Move(moveDirection * Time.deltaTime);
+            //playerMove();
+            if (Controller.isGrounded)
+            {
+                moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                moveDirection = transform.TransformDirection(moveDirection);
+                moveDirection *= Movementspeed;
+                if (Input.GetButton("Jump"))
+                {
+                    moveDirection.y = Jumpspeed;
+                }
+            }
+            moveDirection.y -= Gravity * Time.deltaTime;
+            Controller.Move(moveDirection * Time.deltaTime);
             //transform.Rotate(0, Input.GetAxis("Horizontal"), 0);
         }
     }
 
-    public void playerMove()
+    /*
+    public void PlayerMove()
     {
         //float moveHorizontal = Input.GetAxisRaw("Horizontal");
         //float moveVertical = Input.GetAxisRaw("Vertical");
@@ -59,24 +62,25 @@ public class PlayerMovement : MonoBehaviour
         movement = movement.normalized;
         if (movement != Vector3.zero)
         {
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15F);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15F);
             //anim.SetFloat("MoveSpeed",1.0f);
         }
-        else{
+        //else{
             //anim.SetFloat("MoveSpeed", 0.0f);
-        }
-        transform.Translate(movement * speed * Time.deltaTime, Space.World);
+        //}
+        //transform.Translate(movement * speed * Time.deltaTime, Space.World);
     }
+    */
 
     public void enableWalk()
     {
         walkActive = true;
-        walkCircle.SetActive(true);
+        //walkCircle.SetActive(true);
     }
 
     public void disableWalk()
     {
         walkActive = false;
-        walkCircle.SetActive(false);
+        //walkCircle.SetActive(false);
     }
 }

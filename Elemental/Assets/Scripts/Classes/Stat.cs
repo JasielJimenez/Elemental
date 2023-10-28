@@ -5,15 +5,32 @@ using UnityEngine;
 [System.Serializable]
 public class Stat 
 {
-    // Start is called before the first frame update
+    #region Properties
     [SerializeField]
-    private float baseStat;
+    private int baseStat;
+    [SerializeField]
+    private int currStat;
     [SerializeField]
     private string statInfo;
 
-    public float GetStat()
+    public int GetBaseStat()
     {
         return baseStat;
+    }
+
+    public void SetBaseStat(int value)
+    {
+        baseStat = value;
+    }
+
+    public int GetCurrStat()
+    {
+        return currStat;
+    }
+
+    public void SetCurrStat(int value)
+    {
+        currStat = value;
     }
 
     public string GetInfo()
@@ -21,8 +38,21 @@ public class Stat
         return statInfo;
     }
 
-    public void updateStat(float change)
+    public void SetInfo(string value)
     {
-        baseStat = baseStat + change;
+        statInfo = value;
+    }
+    #endregion
+
+    public void UpdateCurrStat(int change)
+    {
+        if(currStat + change < 0)
+        {
+            currStat = 0;
+        }
+        else
+        {
+            currStat = currStat + change;
+        }
     }
 }

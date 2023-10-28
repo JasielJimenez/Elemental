@@ -103,7 +103,7 @@ public class Gamemanager : MonoBehaviour {
         yield return new WaitForSeconds(time);
         playerTurn = true;
         menuMovement(endTurnUI, -150.0f, 150.0f, 1.0f);
-        cam.GetComponent<CameraMovement>().enableMove();
+        cam.GetComponent<CameraMovement>().EnableMove();
     }
 
     public void menuMovement(GameObject menuMoved, float startFrom, float endAt, float timeTaken)
@@ -183,8 +183,8 @@ public class Gamemanager : MonoBehaviour {
     {
         if(isPlayer == true)
         {
-            playerMaxHealth = selectedPlayer.GetComponentInChildren<CharacterStats>().maxHealth.GetStat();
-            playerCurrHealth = selectedPlayer.GetComponentInChildren<CharacterStats>().currHealth.GetStat();
+            playerMaxHealth = selectedPlayer.GetComponentInChildren<CharacterStats>().MaxHealth.GetCurrStat();
+            playerCurrHealth = selectedPlayer.GetComponentInChildren<CharacterStats>().CurrHealth.GetCurrStat();
             if(playerCurrHealth > -1 && playerCurrHealth <= playerMaxHealth)
             {
                 iTween.ScaleTo(playerHealthBar, new Vector3(playerCurrHealth / playerMaxHealth , 1.0f),0.5f);
@@ -203,8 +203,8 @@ public class Gamemanager : MonoBehaviour {
         }
         else
         {
-            enemyMaxHealth = selectedEnemy.GetComponentInChildren<CharacterStats>().maxHealth.GetStat();
-            enemyCurrHealth = selectedEnemy.GetComponentInChildren<CharacterStats>().currHealth.GetStat();
+            enemyMaxHealth = selectedEnemy.GetComponentInChildren<CharacterStats>().MaxHealth.GetCurrStat();
+            enemyCurrHealth = selectedEnemy.GetComponentInChildren<CharacterStats>().CurrHealth.GetCurrStat();
             if(enemyCurrHealth > -1)
             {
                 iTween.ScaleTo(enemyHealthBar, new Vector3(enemyCurrHealth / enemyMaxHealth , 1.0f),0.5f);
@@ -223,26 +223,26 @@ public class Gamemanager : MonoBehaviour {
         updateHealthBar(isPlayer);
         if(isPlayer == true)
         {
-            characterName.text = selectedPlayer.GetComponentInChildren<CharacterStats>().characterName;
-            characterStats.text = selectedPlayer.GetComponentInChildren<CharacterStats>().attack.GetStat().ToString() + "\n"
-            + selectedPlayer.GetComponentInChildren<CharacterStats>().element.GetStat().ToString() + "\n"
-            + selectedPlayer.GetComponentInChildren<CharacterStats>().defense.GetStat().ToString() + "\n"
-            + selectedPlayer.GetComponentInChildren<CharacterStats>().evasion.GetStat().ToString() + "\n"
-            + selectedPlayer.GetComponentInChildren<CharacterStats>().speed.GetStat().ToString() + "\n"
-            + selectedPlayer.GetComponentInChildren<CharacterStats>().stance.GetStat().ToString() + "\n"
-            + selectedPlayer.GetComponentInChildren<CharacterStats>().focus.GetStat().ToString();
+            characterName.text = selectedPlayer.GetComponentInChildren<CharacterStats>().CharacterName;
+            characterStats.text = selectedPlayer.GetComponentInChildren<CharacterStats>().Attack.GetCurrStat().ToString() + "\n"
+            + selectedPlayer.GetComponentInChildren<CharacterStats>().ElementAttack.GetCurrStat().ToString() + "\n"
+            + selectedPlayer.GetComponentInChildren<CharacterStats>().Defense.GetCurrStat().ToString() + "\n"
+            + selectedPlayer.GetComponentInChildren<CharacterStats>().Evasion.GetCurrStat().ToString() + "\n"
+            + selectedPlayer.GetComponentInChildren<CharacterStats>().Speed.GetCurrStat().ToString() + "\n"
+            + selectedPlayer.GetComponentInChildren<CharacterStats>().CurrStance.GetCurrStat().ToString() + "\n"
+            + selectedPlayer.GetComponentInChildren<CharacterStats>().Focus.GetCurrStat().ToString();
             
         }
         else
         {
-            enemyName.text = selectedEnemy.GetComponentInChildren<CharacterStats>().characterName;
-            enemyStats.text = selectedEnemy.GetComponentInChildren<CharacterStats>().attack.GetStat().ToString() + "\n"
-            + selectedEnemy.GetComponentInChildren<CharacterStats>().element.GetStat().ToString() + "\n"
-            + selectedEnemy.GetComponentInChildren<CharacterStats>().defense.GetStat().ToString() + "\n"
-            + selectedEnemy.GetComponentInChildren<CharacterStats>().evasion.GetStat().ToString() + "\n"
-            + selectedEnemy.GetComponentInChildren<CharacterStats>().speed.GetStat().ToString() + "\n"
-            + selectedEnemy.GetComponentInChildren<CharacterStats>().stance.GetStat().ToString() + "\n"
-            + selectedEnemy.GetComponentInChildren<CharacterStats>().focus.GetStat().ToString();
+            enemyName.text = selectedEnemy.GetComponentInChildren<CharacterStats>().CharacterName;
+            enemyStats.text = selectedEnemy.GetComponentInChildren<CharacterStats>().Attack.GetCurrStat().ToString() + "\n"
+            + selectedEnemy.GetComponentInChildren<CharacterStats>().ElementAttack.GetCurrStat().ToString() + "\n"
+            + selectedEnemy.GetComponentInChildren<CharacterStats>().Defense.GetCurrStat().ToString() + "\n"
+            + selectedEnemy.GetComponentInChildren<CharacterStats>().Evasion.GetCurrStat().ToString() + "\n"
+            + selectedEnemy.GetComponentInChildren<CharacterStats>().Speed.GetCurrStat().ToString() + "\n"
+            + selectedEnemy.GetComponentInChildren<CharacterStats>().CurrStance.GetCurrStat().ToString() + "\n"
+            + selectedEnemy.GetComponentInChildren<CharacterStats>().Focus.GetCurrStat().ToString();
         }
     }
 
@@ -253,14 +253,14 @@ public class Gamemanager : MonoBehaviour {
         moveMenu.SetActive(true);
         //menuMovement(moveMenu,new Vector3(moveMenu.transform.position.x,moveMenu.transform.position.y + 100.0f,moveMenu.transform.position.z),0.1f);
         selectedPlayer.GetComponent<PlayerMovement>().enableWalk();
-        cam.GetComponent<CameraMovement>().disableMove();
+        cam.GetComponent<CameraMovement>().DisableMove();
         isWalking = true;
     }
 
     public void chooseAttack()
     {
         //Debug.Log(selectedPlayer.gameObject.name);
-        if(selectedPlayer.transform.GetChild(0).Find("Stats").GetComponent<CharacterStats>().hasAttacked == false)
+        if(selectedPlayer.transform.GetChild(0).Find("Stats").GetComponent<CharacterStats>().HasActed == false)
         {
             chooseMenu.SetActive(false);
             attackMenu.SetActive(true);
@@ -292,7 +292,7 @@ public class Gamemanager : MonoBehaviour {
         moveMenu.SetActive(false);
         menuMovement(chooseMenu, -250.0f, 250.0f, 0.1f);
         selectedPlayer.GetComponent<PlayerMovement>().disableWalk();
-        cam.GetComponent<CameraMovement>().enableMove();
+        cam.GetComponent<CameraMovement>().EnableMove();
         isWalking = false;
         //Return to original position?
     }
@@ -332,13 +332,13 @@ public class Gamemanager : MonoBehaviour {
     public void confirmEndTurn()
     {
         confirmEndUI.SetActive(true);
-        cam.GetComponent<CameraMovement>().disableMove();
+        cam.GetComponent<CameraMovement>().DisableMove();
     }
 
     public void rejectEndTurn()
     {
         confirmEndUI.SetActive(false);
-        cam.GetComponent<CameraMovement>().enableMove();
+        cam.GetComponent<CameraMovement>().EnableMove();
     }
 
     public void endTurn()
