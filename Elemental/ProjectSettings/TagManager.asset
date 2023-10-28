@@ -7,6 +7,10 @@ TagManager:
   - Menu
   - Enemy
   - PlayerAttack
+  - EnvironmentObject
+  - WalkCircle
+  - BattleManager
+  - AttackRange
   layers:
   - Default
   - TransparentFX
@@ -14,9 +18,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - MovingPlayer
+  - WalkBoundary
+  - Ground
   - 
   - 
   - 
