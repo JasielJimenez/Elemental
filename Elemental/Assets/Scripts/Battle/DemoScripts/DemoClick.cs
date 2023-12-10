@@ -162,6 +162,7 @@ public class DemoClick : MonoBehaviour
                 //DEACTIVATE ALL BUTTONS
                 this.GetComponent<BattleMenuButtons>().ToggleWalkButton(false);
                 this.GetComponent<BattleMenuButtons>().ToggleActionButtons(false);
+                this.GetComponent<BattleMenuButtons>().ToggleEndTurnButton(false);
             }
             else if(character.HasWalked)
             {
@@ -180,6 +181,7 @@ public class DemoClick : MonoBehaviour
                 //ACTIVATE ALL BUTTONS
                 this.GetComponent<BattleMenuButtons>().ToggleWalkButton(true);
                 this.GetComponent<BattleMenuButtons>().ToggleActionButtons(true);
+                this.GetComponent<BattleMenuButtons>().ToggleEndTurnButton(true);
             }
         }
     }

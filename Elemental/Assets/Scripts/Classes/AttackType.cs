@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum AttackType
     {
-        Center,
-        Directional,
-        Specify
+        Normal,
+        Movement,
+        Push,
+        Pull
     }

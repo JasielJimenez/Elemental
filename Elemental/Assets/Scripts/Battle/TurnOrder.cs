@@ -32,9 +32,9 @@ public class TurnOrder : MonoBehaviour
     public Text CurrentTurnText;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        //DON'T ASSIGN BATTLEMENU HERE AND IN BATTLEMENUBUTTONS.CS********
+        //Gets and sets Current Turn Text
         BattleMenu = GameObject.Find("BattleHud");
         TurnMenu  = BattleMenu.transform.GetChild(1).gameObject;
         ChangeTurnWindow = TurnMenu.transform.GetChild(0).gameObject;
@@ -42,7 +42,8 @@ public class TurnOrder : MonoBehaviour
         TurnText = ChangeTurnWindow.transform.GetChild(1).GetComponent<Text>();
         CurrentTurnText = TurnMenu.transform.GetChild(1).GetChild(1).GetComponent<Text>();
         CurrentTurnText.text = "PLAYER TURN";
-        //**************************************************************
+        
+        //Gets list of enemies and players
         PlayerList = GameObject.Find("PlayerList");
         NumPlayers = PlayerList.transform.childCount;
         EnemyList = GameObject.Find("EnemyList");
@@ -54,6 +55,7 @@ public class TurnOrder : MonoBehaviour
         cam = GameObject.Find("CameraBody");
     }
 
+    ///Sets 
     public void ChangeTurn()
     {
         this.GetComponent<DemoClick>().PlayerTurn = false;
@@ -90,6 +92,8 @@ public class TurnOrder : MonoBehaviour
         }
     }
 
+    ///Changes display text for a few seconds to show whose turn it is
+    ///Then starts enemy's turn or player's turn
     IEnumerator DisplayTurnChangeText(CurrTurnEnum test)
     {
         ChangeTurnWindow.SetActive(true);
@@ -98,7 +102,9 @@ public class TurnOrder : MonoBehaviour
 
         if(test == CurrTurnEnum.Enemy)
         {
-            //Get the first enemy's 
+            //First enemy's IsSelected circle glows
+            EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(1).gameObject.SetActive(true);
+            //First enemy's turn starts
             EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(0).gameObject.GetComponent<EnemyBehaviour>().ChooseBestAttack();
         }
         else
@@ -108,13 +114,19 @@ public class TurnOrder : MonoBehaviour
         }
     }
 
-    //After an enemy has their turn, check to see if there are other enemies who have yet to act
-    //Called from Enemy Behavior script
+    ///After an enemy has their turn, checks to see if there are other enemies who have yet to act
+    ///Called from EnemyBehavior script
     public void HandleNextEnemyTurn()
     {
+        //Hide current enemy's IsSelected circle
+        EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(1).gameObject.SetActive(false);
+
         CurrentEnemyIndex++;
         if(CurrentEnemyIndex < NumEnemies)
         {
+            //Next enemy's turn starts
+            EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(1).gameObject.SetActive(true);
+            //Next enemy's turn starts
             EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(0).gameObject.GetComponent<EnemyBehaviour>().ChooseBestAttack();
         }
         else
@@ -133,6 +145,8 @@ public class TurnOrder : MonoBehaviour
     //    ChangeTurn();
     //}
 
+    ///Sets all players' walk circles to their current location
+    ///Sets all players' to be ready for actions
     public void UpdateCharacters()
     {
         for(int i = 0; i < NumPlayers; i++)
@@ -147,14 +161,7 @@ public class TurnOrder : MonoBehaviour
         }
     }
 
-    public void EnteredNewRoom()
-    {
-        CurrentTurn = CurrTurnEnum.Player;
-        EnemyList = GameObject.Find("EnemyList");
-        NumEnemies = EnemyList.transform.childCount;
-        Debug.Log($"There are {NumEnemies} enemies in this room.");
-    }
-
+    ///Ends the turn of the currently selected player
     public void EndCurrentPlayerTurn(int actionsEnded)
     {
         PlayerActionsRemaining -= actionsEnded;

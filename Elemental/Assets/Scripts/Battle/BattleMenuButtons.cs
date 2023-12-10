@@ -13,6 +13,7 @@ public class BattleMenuButtons : MonoBehaviour
     public GameObject WalkMenu;
     public GameObject AttackMenu;
     public GameObject SkillsMenu;
+    public GameObject EndTurnMenu;
 
     public GameObject SelectedObject;
     public GameObject WalkCircle;
@@ -25,7 +26,7 @@ public class BattleMenuButtons : MonoBehaviour
     void Start()
     {
         Cam = GameObject.Find("CameraBody");
-        BattleMenu = GameObject.Find("BattleHud");
+        BattleMenu = this.GetComponent<TurnOrder>().BattleMenu;
         //BattleMenu.SetActive(false);
         PlayerMenu = BattleMenu.transform.GetChild(0).gameObject;
         PlayerMenu.SetActive(false);
@@ -33,6 +34,7 @@ public class BattleMenuButtons : MonoBehaviour
         WalkMenu = PlayerMenu.transform.GetChild(1).gameObject;
         AttackMenu = PlayerMenu.transform.GetChild(2).gameObject;
         SkillsMenu = PlayerMenu.transform.GetChild(3).gameObject;
+        EndTurnMenu = PlayerMenu.transform.GetChild(4).gameObject;
     }
 
     // Update is called once per frame
@@ -162,7 +164,7 @@ public class BattleMenuButtons : MonoBehaviour
         SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().CreateAttackRange(0);
         AttackMenu.SetActive(true);
         ActionsMenu.SetActive(false);
-        HandleAttackDirection(SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList[0].AttackTargetType);
+        HandleAttackDirection(SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList[0].AttackDirection);
         /*
         if(selectedPlayer.transform.GetChild(0).Find("Stats").GetComponent<CharacterStats>().hasAttacked == false)
         {
@@ -206,9 +208,19 @@ public class BattleMenuButtons : MonoBehaviour
         IsRotatingAttack = false;
     }
 
+    ///Opens Skill menu and updates buttons with all current attacks
     public void EnableSkills()
     {
         SkillsMenu.SetActive(true);
+        var skillList = SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList;
+        
+        //Change this to check better <--------------------------------------------------------------------------------------
+        //Only allow 4 skills?
+        for(int i = 0,j = 1; j < skillList.Count && j < 4; i++, j++)
+        {
+            SkillsMenu.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = skillList[j].AttackName;
+        }
+        SkillsMenu.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Text>().text = skillList[1].AttackName;
         ActionsMenu.SetActive(false);
     }
 
@@ -229,22 +241,22 @@ public class BattleMenuButtons : MonoBehaviour
         SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().CreateAttackRange(skillIndex);
         AttackMenu.SetActive(true);
         ActionsMenu.SetActive(false);
-        HandleAttackDirection(SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList[skillIndex].AttackTargetType);
+        HandleAttackDirection(SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList[skillIndex].AttackDirection);
     }
 
-    public void HandleAttackDirection(AttackType AttackTargetType)
+    public void HandleAttackDirection(AttackDirectionType attackDirection)
     {
         Cam.GetComponent<CameraMovement>().DisableMove();
-        Debug.Log(AttackTargetType);
-        switch(AttackTargetType)
+        Debug.Log(attackDirection);
+        switch(attackDirection)
         {
-            case AttackType.Center:
+            case AttackDirectionType.Center:
             break;
-            case AttackType.Directional:
+            case AttackDirectionType.Directional:
                 Debug.Log("Directional Attack");
                 IsRotatingAttack = true;
             break;
-            case AttackType.Specify:
+            case AttackDirectionType.Specify:
             break;
         }
     }
@@ -337,6 +349,11 @@ public class BattleMenuButtons : MonoBehaviour
         WalkMenu.transform.GetChild(1).gameObject.GetComponent<Button>().interactable = cancelButtonAvailable;
     }
 
+    public void ToggleEndTurnButton(bool buttonAvailable)
+    {
+        EndTurnMenu.transform.GetChild(0).gameObject.GetComponent<Button>().interactable = buttonAvailable;
+    }
+
     #endregion
 
     #region EndTurn
@@ -354,7 +371,9 @@ public class BattleMenuButtons : MonoBehaviour
 
     public void EndTurn()
     {
-        //MAKE IT SCALE OFF OF NUMBER OF PLAYERS
+        var test = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
+        test.HasActed = true;
+        test.HasWalked = true;
         this.GetComponent<TurnOrder>().EndCurrentPlayerTurn(1);
         DisablePlayerSelection();
     }

@@ -14,7 +14,7 @@ public class EnemyBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        BattleManager = GameObject.Find("DemoBattleManager");
+        //BattleManager = GameObject.Find("DemoBattleManager");
         AttackList = this.GetComponent<CharacterAttackList>().AttackList;
     }
 
@@ -32,13 +32,13 @@ public class EnemyBehaviour : MonoBehaviour
             --TurnsLeftOfCharge;
 			//Debug.Log("Turns to charge remaining: " + TurnsLeftOfCharge);
         }
-		StartCoroutine(DemoEnemyTurn(1));
+		StartCoroutine(DemoEnemyTurn(0));
 
         //Look through list of attacks
         //see which attack is ready and does the most damage to one of the player party members
         //depending on attack range, see if attack will reach
         //if not, repeat process
-        var playerList = BattleManager.GetComponent<TurnOrder>().PlayerList;
+        //var playerList = BattleManager.GetComponent<TurnOrder>().PlayerList;
     }
 
     IEnumerator DemoEnemyTurn(int attackIndex)
@@ -46,13 +46,14 @@ public class EnemyBehaviour : MonoBehaviour
         if(!IsChargingAttack)
         {
             //Debug.Log("Attack Ready");
-            this.GetComponent<CharacterCombat>().CreateAttackRange(attackIndex);
-            if(AttackList[attackIndex].IsCharge)
+            var currAttack = AttackList[attackIndex];
+            this.GetComponent<CharacterCombat>().CreateEnemyAttackRange(currAttack);
+            if(currAttack.IsCharge)
         	{
 				yield return new WaitForSeconds(2);
 				//Debug.Log("Preparing Charge Attack");
 				IsChargingAttack = true;
-            	TurnsLeftOfCharge = AttackList[attackIndex].TurnsToCharge;
+            	TurnsLeftOfCharge = currAttack.TurnsToCharge;
     			BattleManager.GetComponent<TurnOrder>().HandleNextEnemyTurn();
 				yield break;
         	}

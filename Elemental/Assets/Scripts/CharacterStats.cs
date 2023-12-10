@@ -61,19 +61,35 @@ public class CharacterStats : MonoBehaviour
     //public GameObject
     //public List<StatNames> AllStatChanges = new List<StatChange>();
     //public List<Attack> AttackList = new List<Attack>();
+    public GameObject BattleManager;
+
     public List<StatChange> AllStatChanges = new List<StatChange>();
     public Dictionary<string,int> EnmityList = new Dictionary<string,int>();
-    public string PriorityTarget = "";
+    public GameObject PriorityTarget;
     public int HighestEnmity = 0;
 
-    //public List<> EnmityList = new List<List>
 
-    void Awake()
+    void Start()
     {
         //currHealth = maxHealth;
         //gameManager = GameObject.Find("Gamemanager");
         HasActed = false;
+        HasWalked = false;
         //Debug.Log(hasAttacked);
+
+        //RACE CONDITION? <-------------------------------------------------------------------------------------------
+
+        BattleManager = GameObject.Find("DemoBattleManager");
+        Debug.Log(CharacterName + ": " + this.transform.parent.gameObject.tag);
+        if(this.transform.parent.gameObject.tag == "Player")
+        {
+            PriorityTarget = BattleManager.GetComponent<TurnOrder>().EnemyList.transform.GetChild(0).GetChild(0).gameObject;
+        }
+        else if(this.transform.parent.gameObject.tag == "Enemy")
+        {
+            this.GetComponent<EnemyBehaviour>().BattleManager = BattleManager;
+            PriorityTarget = BattleManager.GetComponent<TurnOrder>().PlayerList.transform.GetChild(0).GetChild(1).gameObject;
+        }
     }
 
 /*
@@ -136,29 +152,29 @@ public class CharacterStats : MonoBehaviour
         ChangeStat(incomingStatChange.GetNumChange(), incomingStatChange.GetStatName());
     }
 
-    public void UpdateEnmityList(string opponentName, int enmityAdded)
+    public void UpdateEnmityList(GameObject opponent, int enmityAdded)
     {
         int value = 0;
-        if(EnmityList.TryGetValue(opponentName, out value))
+        if(EnmityList.TryGetValue(opponent.name, out value))
         {
             Debug.Log("ENMITY VALUE: " + value);
             value += enmityAdded;
-            EnmityList[opponentName] = value;
+            EnmityList[opponent.name] = value;
         }
         else
         {
-            EnmityList.Add(opponentName, enmityAdded);
+            EnmityList.Add(opponent.name, enmityAdded);
             value = enmityAdded;
         }
 
         if(value >= HighestEnmity)
         {
             HighestEnmity = value;
-            PriorityTarget = opponentName;
+            PriorityTarget = opponent;
         }
         else
         {
-            Debug.Log("VALUE: " + value + ", HIGHESTENMITY: " + HighestEnmity + ", OPPONENTNAME: " + opponentName + ", PRIORITYTARGET: " + PriorityTarget);
+            Debug.Log("VALUE: " + value + ", HIGHESTENMITY: " + HighestEnmity + ", OPPONENTNAME: " + opponent.name + ", PriorityTargetName: " + PriorityTarget.name);
         }
     }
 

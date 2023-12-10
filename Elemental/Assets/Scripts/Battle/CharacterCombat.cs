@@ -92,7 +92,7 @@ public class CharacterCombat : MonoBehaviour
                 }
 
                 opponentStats.ChangeStat(-DamageList[i], "CurrentHealth");
-                opponentStats.UpdateEnmityList(MyStats.CharacterName, DamageList[i]); //Maybe update what determines enmity value?
+                opponentStats.UpdateEnmityList(this.gameObject, DamageList[i]); //Maybe update what determines enmity value?
 
                 CheckForStatChanges();
 
@@ -112,12 +112,15 @@ public class CharacterCombat : MonoBehaviour
                 target.transform.GetChild(3).GetChild(0).GetChild(1).gameObject.SetActive(false);
                 //hide target circle
                 target.transform.GetChild(2).gameObject.SetActive(false);
+
+                HandleTargetCombatMovement();
             }
         }
         else
         {
             Debug.Log("ERROR: There were " +  TargetsInRange.Count + " targets, while there were " + DamageList.Count + " damages calculated.");
         }
+        HandleCharacterCombatMovement();
         DeleteAttackRange();
     }
 
@@ -163,6 +166,30 @@ public class CharacterCombat : MonoBehaviour
         //TEST---------------------------------------------------------------------------
     }
 
+    public void HandleTargetCombatMovement()
+    {
+        if(CurrAttack.WillMoveEnemy)
+        {
+
+        }
+    }
+
+    public void HandleCharacterCombatMovement()
+    {
+        if(CurrAttack.WillMovePlayer)
+        {
+            Debug.Log(this.transform.parent.forward);
+            var xDirection = this.transform.parent.forward.x * CurrAttack.MovePlayerDistance;
+            Debug.Log("X: " + xDirection);
+            var zDirection = this.transform.parent.forward.z * CurrAttack.MovePlayerDistance;
+            Debug.Log("Z: " + zDirection);
+            this.transform.parent.position += new Vector3(xDirection, 0, zDirection);
+
+            //Moves walk circle to new character location
+            this.transform.parent.parent.GetChild(0).position += new Vector3(xDirection,0,zDirection);
+        }
+    }
+
     #endregion
 
     #region Attack Range Creation/Deletion
@@ -171,12 +198,27 @@ public class CharacterCombat : MonoBehaviour
     {
         CurrAttack = this.GetComponent<CharacterAttackList>().AttackList[attackNumber];
         var basicAttackRange = CurrAttack.AttackRange;
-        SpawnAttackRange(basicAttackRange);
+        SpawnAttackRange(basicAttackRange, new Vector3(this.transform.position.x, 0, this.transform.position.z));
     }
 
-    public void SpawnAttackRange(GameObject range)
+    public void CreateEnemyAttackRange(Attack CurrAttack)
     {
-        CurrAttackRange = Instantiate(range, new Vector3(this.transform.position.x, 0, this.transform.position.z), this.transform.rotation);
+        //CurrAttack = this.GetComponent<CharacterAttackList>().AttackList[attackNumber];
+        var basicAttackRange = CurrAttack.AttackRange;
+        if(CurrAttack.AttackDirection == AttackDirectionType.Specify)
+        {
+            var target = this.GetComponent<CharacterStats>().PriorityTarget.transform;
+            SpawnAttackRange(basicAttackRange, new Vector3(target.position.x, 0, target.position.z));
+        }
+        else
+        {
+            SpawnAttackRange(basicAttackRange, new Vector3(this.transform.position.x, 0, this.transform.position.z));
+        }
+    }
+
+    public void SpawnAttackRange(GameObject range, Vector3 rangePosition)
+    {
+        CurrAttackRange = Instantiate(range, rangePosition, this.transform.rotation);
         CurrAttackRange.transform.SetParent(this.transform, true);
     }
 
