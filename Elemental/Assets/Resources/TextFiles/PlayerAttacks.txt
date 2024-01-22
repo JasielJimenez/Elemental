@@ -1,0 +1,4 @@
+0,Strike,A basic attack that can hit multiple times if you outspeed your opponent.,BasicCircle,Center,SpinSlashEffect,0,0,80,0,3,0,0,false,0,false,0,false,0,false,none,false,none,false,false,false,false,false,
+1,Beam,A projectile that can hit distant foes.,BasicColumn,Directional,NoParticle,0,20,70,0,5,10,20,false,0,false,0,false,0,false,none,false,none,false,false,false,false,false,
+2,Weaken,An attack that reduces the opponents attack by 50%.,BasicCircle,Center,NoParticle,0,0,75,0,3,10,0,false,0,false,0,false,0,true,AttackDrop|50|3|true,false,none,false,false,false,false,false,
+3,Sliding Dash,Attack by dashing through the target.,MoveColumn,Directional,NoParticle,10,0,80,5,10,20,0,true,25,false,0,false,0,false,none,false,none,false,false,false,false,false

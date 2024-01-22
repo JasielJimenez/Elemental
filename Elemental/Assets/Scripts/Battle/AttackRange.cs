@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class AttackRange : MonoBehaviour
 {
-    public List<GameObject> colliderList = new List<GameObject>();
-    public string OwnerTag = "";
+    public GameObject BattleManager;
+    public List<GameObject> ColliderList = new List<GameObject>();
+    public string AttackOwnerTag;
+
+    //public string OwnerTag = "";
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        BattleManager = GameObject.Find("DemoBattleManager");
+        AttackOwnerTag = this.transform.parent.parent.gameObject.tag;
     }
 
     // Update is called once per frame
@@ -21,19 +25,25 @@ public class AttackRange : MonoBehaviour
 
     public void OnTriggerEnter(Collider collider)
     {
-        if (!colliderList.Contains(collider.gameObject) && (collider.gameObject.tag == "Enemy" || collider.gameObject.tag == "EnvironmentObject" || collider.gameObject.tag == "Player"))
+        //PREVENT FRIENDLY FIRE! Maybe check to see who it is coming from and if it is a damaging attack
+        var targetTag = collider.gameObject.tag;
+        if(!ColliderList.Contains(collider.gameObject) && targetTag != AttackOwnerTag)
         {
-            colliderList.Add(collider.gameObject);
-            this.transform.parent.parent.gameObject.GetComponent<CharacterCombat>().AddToTargetList(collider.gameObject);
+            if (targetTag == "Enemy" || targetTag == "EnvironmentObject" || targetTag == "Player")
+            {
+                ColliderList.Add(collider.gameObject);
+                BattleManager.transform.GetComponent<CombatManager>().AddToTargetList(collider.gameObject);
+            }
         }
     }
 
     public void OnTriggerExit(Collider collider)
     {
-        if (colliderList.Contains(collider.gameObject) && (collider.gameObject.tag == "Enemy" || collider.gameObject.tag == "EnvironmentObject" || collider.gameObject.tag == "Player"))
+        var targetTag = collider.gameObject.tag;
+        if (ColliderList.Contains(collider.gameObject) && (targetTag == "Enemy" || targetTag == "EnvironmentObject" || targetTag == "Player"))
         {
-            colliderList.Remove(collider.gameObject);
-            this.transform.parent.parent.gameObject.GetComponent<CharacterCombat>().RemoveFromTargetList(collider.gameObject);
+            ColliderList.Remove(collider.gameObject);
+            BattleManager.transform.GetComponent<CombatManager>().RemoveFromTargetList(collider.gameObject);
         }
     }
 }

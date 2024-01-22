@@ -58,6 +58,8 @@ public class CharacterStats : MonoBehaviour
     //public GameObject Opponent;
     public bool HasActed;
     public bool HasWalked;
+
+    public bool isDowned;
     //public GameObject
     //public List<StatNames> AllStatChanges = new List<StatChange>();
     //public List<Attack> AttackList = new List<Attack>();
@@ -80,7 +82,7 @@ public class CharacterStats : MonoBehaviour
         //RACE CONDITION? <-------------------------------------------------------------------------------------------
 
         BattleManager = GameObject.Find("DemoBattleManager");
-        Debug.Log(CharacterName + ": " + this.transform.parent.gameObject.tag);
+        //Debug.Log(CharacterName + ": " + this.transform.parent.gameObject.tag);
         if(this.transform.parent.gameObject.tag == "Player")
         {
             PriorityTarget = BattleManager.GetComponent<TurnOrder>().EnemyList.transform.GetChild(0).GetChild(0).gameObject;
@@ -148,8 +150,9 @@ public class CharacterStats : MonoBehaviour
         //Handle in TurnOrder.cs?
 
         Debug.Log("All Stat Changes size: " + AllStatChanges.Count);
-
-        ChangeStat(incomingStatChange.GetNumChange(), incomingStatChange.GetStatName());
+        
+        //Stat debuffs can't be made negative
+        ChangeStat(incomingStatChange.GetNumChange(), incomingStatChange.GetStatName(), true);
     }
 
     public void UpdateEnmityList(GameObject opponent, int enmityAdded)
@@ -157,7 +160,7 @@ public class CharacterStats : MonoBehaviour
         int value = 0;
         if(EnmityList.TryGetValue(opponent.name, out value))
         {
-            Debug.Log("ENMITY VALUE: " + value);
+            //Debug.Log("ENMITY VALUE: " + value);
             value += enmityAdded;
             EnmityList[opponent.name] = value;
         }
@@ -178,52 +181,60 @@ public class CharacterStats : MonoBehaviour
         }
     }
 
-    public void ChangeStat(int statChange, string statName)
+    public void ChangeStat(int statChange, string statName, bool positiveStat)
     {
         switch(statName)
         {
             case "MaxHealth":
-                MaxHealth.UpdateCurrStat(statChange);
+                MaxHealth.UpdateCurrStat(statChange, positiveStat);
             break;
-            case "CurrentHealth":
-                CurrHealth.UpdateCurrStat(statChange);
+            case "CurrHealth":
+                CurrHealth.UpdateCurrStat(statChange, positiveStat);
             break;
             case "Attack":
             Debug.Log("Changing Attack Stat");
-                Attack.UpdateCurrStat(statChange);
+                Attack.UpdateCurrStat(statChange, positiveStat);
             break;
             case "ElementAttack":
-                ElementAttack.UpdateCurrStat(statChange);
+                ElementAttack.UpdateCurrStat(statChange, positiveStat);
             break;
             case "Defense":
-                Defense.UpdateCurrStat(statChange);
+                Defense.UpdateCurrStat(statChange, positiveStat);
             break;
             case "Evasion":
-                Evasion.UpdateCurrStat(statChange);
+                Evasion.UpdateCurrStat(statChange, positiveStat);
             break;
             case "MaxStance":
-                MaxStance.UpdateCurrStat(statChange);
+                MaxStance.UpdateCurrStat(statChange, positiveStat);
             break;
             case "CurrStance":
-                CurrStance.UpdateCurrStat(statChange);
+                CurrStance.UpdateCurrStat(statChange, positiveStat);
             break;
             case "Focus":
-                Focus.UpdateCurrStat(statChange);
+                Focus.UpdateCurrStat(statChange, positiveStat);
             break;
             case "Speed":
-                Speed.UpdateCurrStat(statChange);
+                Speed.UpdateCurrStat(statChange, positiveStat);
             break;
             case "MaxStamina":
-                MaxStamina.UpdateCurrStat(statChange);
+                MaxStamina.UpdateCurrStat(statChange, positiveStat);
             break;
-            case "CurrentStamina":
-                CurrStamina.UpdateCurrStat(statChange);
+            case "CurrStamina":
+                CurrStamina.UpdateCurrStat(statChange, positiveStat);
+                if(CurrStamina.GetCurrStat() > MaxStamina.GetCurrStat())
+                {
+                    CurrStamina.SetCurrStat(MaxStamina.GetCurrStat());
+                }
             break;
             case "MaxElement":
-                MaxElement.UpdateCurrStat(statChange);
+                MaxElement.UpdateCurrStat(statChange, positiveStat);
             break;
-            case "CurrentElement":
-                CurrElement.UpdateCurrStat(statChange);
+            case "CurrElement":
+                CurrElement.UpdateCurrStat(statChange, positiveStat);
+                if(CurrElement.GetCurrStat() > MaxElement.GetCurrStat())
+                {
+                    CurrElement.SetCurrStat(MaxElement.GetCurrStat());
+                }
             break;
             default:
                 Debug.Log("Invalid stat name given to be changed");

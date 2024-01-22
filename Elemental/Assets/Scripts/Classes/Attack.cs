@@ -12,6 +12,7 @@ public class Attack
     public bool HasMultipleAttackRanges;            //Not sure if needed
     public GameObject MultipleAttackRanges;         //AttackRange can probably hold some form of attack range spawner
     public AttackDirectionType AttackDirection;
+    public GameObject ParticleEffects;              //Make into a list?
     public int AddedDamage;
     public int ElementDamage;
     public int Accuracy;
@@ -19,7 +20,7 @@ public class Attack
     public int AttackTime;
     public int StaminaCost;
     public int ElementCost;
-    public Vector3 AttackLocation;
+    //public Vector3 AttackLocation;
     public bool WillMovePlayer;
     public float MovePlayerDistance;
     public bool WillMoveEnemy;

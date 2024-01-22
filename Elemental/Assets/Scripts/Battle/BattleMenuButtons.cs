@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BattleMenuButtons : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class BattleMenuButtons : MonoBehaviour
     public GameObject PlayerMenu;
     public GameObject ActionsMenu;
     public GameObject WalkMenu;
+    public GameObject CharacterInfoMenu;
     public GameObject AttackMenu;
     public GameObject SkillsMenu;
     public GameObject EndTurnMenu;
@@ -18,9 +20,14 @@ public class BattleMenuButtons : MonoBehaviour
     public GameObject SelectedObject;
     public GameObject WalkCircle;
 
+    public GameObject BattleLog;
+    public TextMeshProUGUI BattleLogText;
+
     public float RotateSpeed = 50;
 
     public bool IsRotatingAttack = false;
+
+    private Colors UIColors = new Colors();
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +36,19 @@ public class BattleMenuButtons : MonoBehaviour
         BattleMenu = this.GetComponent<TurnOrder>().BattleMenu;
         //BattleMenu.SetActive(false);
         PlayerMenu = BattleMenu.transform.GetChild(0).gameObject;
-        PlayerMenu.SetActive(false);
+        ToggleMenu(nameof(PlayerMenu),false);
         ActionsMenu = PlayerMenu.transform.GetChild(0).gameObject;
         WalkMenu = PlayerMenu.transform.GetChild(1).gameObject;
         AttackMenu = PlayerMenu.transform.GetChild(2).gameObject;
         SkillsMenu = PlayerMenu.transform.GetChild(3).gameObject;
         EndTurnMenu = PlayerMenu.transform.GetChild(4).gameObject;
+
+        CharacterInfoMenu = BattleMenu.transform.GetChild(2).gameObject;
+        ToggleMenu(nameof(CharacterInfoMenu),false);
+
+        BattleLog = GameObject.Find("BattleLog");
+        BattleLogText = BattleLog.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+        BattleLogText.text = "BATTLE START";
     }
 
     // Update is called once per frame
@@ -111,10 +125,10 @@ public class BattleMenuButtons : MonoBehaviour
         //BattleMenu.SetActive(false);
         WalkCircle = SelectedObject.transform.parent.GetChild(0).gameObject;
         WalkCircle.SetActive(true);
-        this.GetComponent<DemoClick>().IsWalkingPhase = true;
-        Debug.Log(WalkCircle.name);
-        WalkMenu.SetActive(true);
-        ActionsMenu.SetActive(false);
+        this.GetComponent<DemoClick>().ClickDisabled = true;
+        //Debug.Log(WalkCircle.name);
+        ToggleMenu(nameof(WalkMenu),true);
+        ToggleMenu(nameof(ActionsMenu),false);
         this.GetComponent<DemoClick>().ToggleNavMesh(true);
         //PlayerMenu.SetActive(true);
         //menuMovement(PlayerMenu,new Vector3(PlayerMenu.transform.position.x,PlayerMenu.transform.position.y + 100.0f,PlayerMenu.transform.position.z),0.1f);
@@ -126,32 +140,24 @@ public class BattleMenuButtons : MonoBehaviour
     public void ConfirmWalk()
     {
         WalkCircle.SetActive(false);
-        this.GetComponent<DemoClick>().IsWalkingPhase = false;
-        WalkMenu.SetActive(false);
+        this.GetComponent<DemoClick>().ClickDisabled = false;
+        ToggleMenu(nameof(WalkMenu),false);
         SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>().HasWalked = true;
-        ActionsMenu.SetActive(true);
+        ToggleMenu(nameof(ActionsMenu),true);
         this.GetComponent<DemoClick>().ToggleNavMesh(false);
-        if(!CheckForEndTurn())
-        {
-            this.GetComponent<DemoClick>().CheckAvailableActions();
-        }
-        else
-        {
-            DisablePlayerSelection();
-        }
+        CharacterTurnFinished();
     }
 
     public void CancelWalk()
     {
         WalkCircle.SetActive(false);
-        this.GetComponent<DemoClick>().IsWalkingPhase = false;
-        WalkMenu.SetActive(false);
-        ActionsMenu.SetActive(true);
+        this.GetComponent<DemoClick>().ClickDisabled = false;
+        ToggleMenu(nameof(WalkMenu),false);
+        ToggleMenu(nameof(ActionsMenu),true);
 
-        //NEEDS SOME TWEAKING
-        var test =  new Vector3(WalkCircle.transform.position.x, WalkCircle.transform.position.y, this.transform.position.z);
+        var walkCirclePosition = new Vector3(WalkCircle.transform.position.x, WalkCircle.transform.position.y, WalkCircle.transform.position.z);
         this.GetComponent<DemoClick>().ToggleNavMesh(false);
-        SelectedObject.transform.position = test;
+        SelectedObject.transform.position = walkCirclePosition;
     }
 
     #endregion
@@ -161,9 +167,9 @@ public class BattleMenuButtons : MonoBehaviour
     public void EnableBasicAttack()
     {
         //Debug.Log(selectedPlayer.gameObject.name);
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().CreateAttackRange(0);
-        AttackMenu.SetActive(true);
-        ActionsMenu.SetActive(false);
+        this.GetComponent<CombatManager>().CreateAttackRange(0);
+        ToggleMenu(nameof(AttackMenu),true);
+        ToggleMenu(nameof(ActionsMenu),false);
         HandleAttackDirection(SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList[0].AttackDirection);
         /*
         if(selectedPlayer.transform.GetChild(0).Find("Stats").GetComponent<CharacterStats>().hasAttacked == false)
@@ -177,33 +183,45 @@ public class BattleMenuButtons : MonoBehaviour
 
     public void ConfirmAttack()
     {
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().DamageStep();
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().DeleteAttackRange();
-        AttackMenu.SetActive(false);
-        Cam.GetComponent<CameraMovement>().EnableMove();
+        ToggleMenu(nameof(AttackMenu),false);
+        this.GetComponent<CombatManager>().PlayerAction();
+        //Cam.GetComponent<CameraMovement>().EnableMove();    //Call from coroutine in CombatManager
         IsRotatingAttack = false;
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>().HasActed = true;
+        //SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>().HasActed = true;
 
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().BuffBeenApplied = false;
-        Debug.Log("From BattleMenu (BuffBeenApplied = " + SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().BuffBeenApplied + ")");
+        this.GetComponent<CombatManager>().BuffBeenApplied = false;
+        //ActionsMenu.SetActive(true);
+        //Debug.Log("From BattleMenu (BuffBeenApplied = " + SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().BuffBeenApplied + ")");
 
-        CancelAttack();
+        //CancelAttack();
+        
+    }
+
+    public void ReopenMenuAfterAttack()
+    {
+        //CALL FROM IENUMERATOR IN COMBATMANAGER
+    }
+
+    public void CharacterTurnFinished()
+    {
+        //Called from CombatManager after player character has completed an action
+        //Also called from here after confirming walk action
         if(!CheckForEndTurn())
         {
             this.GetComponent<DemoClick>().CheckAvailableActions();
+            
         }
         else
         {
-            
             DisablePlayerSelection();
         }
     }
 
     public void CancelAttack()
     {
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().DeleteAttackRange();
-        AttackMenu.SetActive(false);
-        ActionsMenu.SetActive(true);
+        this.GetComponent<CombatManager>().DeleteAttackRange();
+        ToggleMenu(nameof(AttackMenu),false);
+        ToggleMenu(nameof(ActionsMenu),true);
         Cam.GetComponent<CameraMovement>().EnableMove();
         IsRotatingAttack = false;
     }
@@ -211,7 +229,7 @@ public class BattleMenuButtons : MonoBehaviour
     ///Opens Skill menu and updates buttons with all current attacks
     public void EnableSkills()
     {
-        SkillsMenu.SetActive(true);
+        ToggleMenu(nameof(SkillsMenu),true);
         var skillList = SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList;
         
         //Change this to check better <--------------------------------------------------------------------------------------
@@ -219,35 +237,44 @@ public class BattleMenuButtons : MonoBehaviour
         for(int i = 0,j = 1; j < skillList.Count && j < 4; i++, j++)
         {
             SkillsMenu.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = skillList[j].AttackName;
+            Debug.Log("1st skill " + skillList[j].AttackName + " stamina cost: " + skillList[j].StaminaCost);
+            if((SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>().CurrStamina.GetCurrStat() <= 0 && skillList[j].StaminaCost > 0) || (SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>().CurrElement.GetCurrStat() <= 0 &&  skillList[j].ElementCost > 0))
+            {
+                SkillsMenu.transform.GetChild(i).gameObject.GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                SkillsMenu.transform.GetChild(i).gameObject.GetComponent<Button>().interactable = true;
+            }
         }
         SkillsMenu.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Text>().text = skillList[1].AttackName;
-        ActionsMenu.SetActive(false);
+        ToggleMenu(nameof(ActionsMenu),false);
     }
 
     public void ReturnFromSkills()
     {
-        SkillsMenu.SetActive(false);
-        ActionsMenu.SetActive(true);
+        ToggleMenu(nameof(SkillsMenu),false);
+        ToggleMenu(nameof(ActionsMenu),true);
     }
 
     public void ReturnFromCurrentSkill()
     {
-        SkillsMenu.SetActive(true);
+        ToggleMenu(nameof(SkillsMenu),true);
     }
 
     public void UseSkill(int skillIndex)
     {
-        SkillsMenu.SetActive(false);
-        SelectedObject.transform.GetChild(0).GetComponent<CharacterCombat>().CreateAttackRange(skillIndex);
-        AttackMenu.SetActive(true);
-        ActionsMenu.SetActive(false);
+        ToggleMenu(nameof(SkillsMenu),false);
+        this.GetComponent<CombatManager>().CreateAttackRange(skillIndex);
+        ToggleMenu(nameof(AttackMenu),true);
+        ToggleMenu(nameof(ActionsMenu),false);
         HandleAttackDirection(SelectedObject.transform.GetChild(0).GetComponent<CharacterAttackList>().AttackList[skillIndex].AttackDirection);
     }
 
     public void HandleAttackDirection(AttackDirectionType attackDirection)
     {
         Cam.GetComponent<CameraMovement>().DisableMove();
-        Debug.Log(attackDirection);
+        //Debug.Log(attackDirection);
         switch(attackDirection)
         {
             case AttackDirectionType.Center:
@@ -263,73 +290,45 @@ public class BattleMenuButtons : MonoBehaviour
 
     #endregion
 
-    /*
-    public void chooseItem()
-    {
-        chooseMenu.SetActive(false);
-
-    }
-
-    public void chooseReturn()
-    {
-        chooseMenu.SetActive(false);
-        playerHUD.SetActive(false);
-        playerSelectCircle.SetActive(false);
-    }
-
-    public void returnFromAttack()
-    {
-        attackMenu.SetActive(false);
-        menuMovement(chooseMenu, -250.0f, 250.0f, 0.1f);
-    }
-
-    public void toggleStats()
-    {
-        if(showPlayerStats == false)
-        {
-            menuMovement(playerStatsMenu, 210.0f, -210.0f, 0.1f);
-            showPlayerStats = true;
-        }
-        else
-        {
-            //menuMovement(statsMenu, false, 0.0f, 210.0f, 0.1f);
-            playerStatsMenu.SetActive(false);
-            //StartCoroutine(waitTime(2.0f, statsMenu));
-            showPlayerStats = false;
-        }
-    }
-
-    public void toggleEnemyStats()
-    {
-        if(showEnemyStats == false)
-        {
-            menuMovement(enemyStatsMenu, 210.0f, -210.0f, 0.1f);
-            showEnemyStats = true;
-        }
-        else
-        {
-            //menuMovement(statsMenu, false, 0.0f, 210.0f, 0.1f);
-            enemyStatsMenu.SetActive(false);
-            //StartCoroutine(waitTime(2.0f, statsMenu));
-            showEnemyStats = false;
-        }
-    }
-
-    public void confirmEndTurn()
-    {
-        confirmEndUI.SetActive(true);
-        cam.GetComponent<CameraMovement>().disableMove();
-    }
-
-    public void rejectEndTurn()
-    {
-        confirmEndUI.SetActive(false);
-        cam.GetComponent<CameraMovement>().enableMove();
-    }
-
-    */
-
     #region ToggleButtons
+
+    public void ToggleMenu(string menuName, bool toggle)
+    {
+        switch(menuName)
+        {
+            case nameof(BattleMenu):
+            BattleMenu.SetActive(toggle);
+            break;
+            case nameof(PlayerMenu):
+            PlayerMenu.SetActive(toggle);
+            break;
+            case nameof(ActionsMenu):
+            ActionsMenu.SetActive(toggle);
+            break;
+            case nameof(WalkMenu):
+            WalkMenu.SetActive(toggle);
+            break;
+            case nameof(CharacterInfoMenu):
+            CharacterInfoMenu.SetActive(toggle);
+            if(toggle)
+            {
+                UpdateCharacterHudMenu();
+            }
+            break;
+            case nameof(AttackMenu):
+            AttackMenu.SetActive(toggle);
+            break;
+            case nameof(SkillsMenu):
+            SkillsMenu.SetActive(toggle);
+            break;
+            case nameof(EndTurnMenu):
+            EndTurnMenu.SetActive(toggle);
+            break;
+            default:
+            Debug.Log("Invalid name for menu");
+            break;
+        }
+    }
 
     public void ToggleWalkButton(bool buttonAvailable)
     {
@@ -360,8 +359,8 @@ public class BattleMenuButtons : MonoBehaviour
 
     public bool CheckForEndTurn()
     {
-        var test = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
-        if(test.HasActed && test.HasWalked)
+        var character = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
+        if(character.HasActed && character.HasWalked)
         {
             this.GetComponent<TurnOrder>().EndCurrentPlayerTurn(1);
             return true;
@@ -371,27 +370,106 @@ public class BattleMenuButtons : MonoBehaviour
 
     public void EndTurn()
     {
-        var test = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
-        test.HasActed = true;
-        test.HasWalked = true;
+        var character = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
+        character.HasActed = true;
+        character.HasWalked = true;
         this.GetComponent<TurnOrder>().EndCurrentPlayerTurn(1);
         DisablePlayerSelection();
     }
 
+    //Calls DeselectCurrentObject() in DemoClick.cs
     public void DisablePlayerSelection()
     {
-        this.GetComponent<DemoClick>().IsWalkingPhase = false;
-        PlayerMenu.SetActive(false);
-        SelectedObject.transform.GetChild(1).gameObject.SetActive(false);
-        if(WalkMenu.activeSelf)
-        {
-            CancelWalk();
-        }
-        if(AttackMenu.activeSelf)
-        {
-            CancelAttack();
-        }
-        SelectedObject = null;
+        //this.GetComponent<DemoClick>().ClickDisabled = false;
+        //ToggleMenu(nameof(PlayerMenu),false);
+        //ToggleMenu(nameof(CharacterInfoMenu),false);
+        //ToggleMenu("CharacterInfoMenu",false);
+        //SelectedObject.transform.GetChild(1).gameObject.SetActive(false);
+        //if(WalkMenu.activeSelf)
+        //{
+        //    CancelWalk();
+        //}
+        //if(AttackMenu.activeSelf)
+        //{
+        //    CancelAttack();
+        //}
+        //this.GetComponent<DemoClick>().DeselectCurrentObject();
+        //SelectedObject = null;
+        this.GetComponent<DemoClick>().DeselectCurrentObject();
     }
+    #endregion
+
+    #region CharacterInfoMenu
+
+    public void UpdateCharacterHudMenu()
+    {
+        var characterStats = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
+        var name = CharacterInfoMenu.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
+        name.text = characterStats.CharacterName;
+        
+        //Health
+        var healthBar = CharacterInfoMenu.transform.GetChild(0).GetChild(1).Find("HealthBarScale");
+        var healthText = CharacterInfoMenu.transform.GetChild(0).GetChild(1).Find("HealthText").GetComponent<TextMeshProUGUI>();
+        healthText.text = characterStats.CurrHealth.GetCurrStat() + "/" + characterStats.MaxHealth.GetCurrStat();
+        float healthRemaining = (float)characterStats.CurrHealth.GetCurrStat() / (float)characterStats.MaxHealth.GetCurrStat();
+        healthBar.transform.localScale = new Vector3(healthRemaining, healthBar.transform.localScale.y, healthBar.transform.localScale.z);
+
+        //Stamina
+        var staminaBar = CharacterInfoMenu.transform.GetChild(0).GetChild(2).Find("StaminaBarScale");
+        var staminaText = CharacterInfoMenu.transform.GetChild(0).GetChild(2).Find("StaminaText").GetComponent<TextMeshProUGUI>();
+        staminaText.text = characterStats.CurrStamina.GetCurrStat() + "/" + characterStats.MaxStamina.GetCurrStat();
+        float staminaRemaining = 0;
+        if(characterStats.MaxStamina.GetCurrStat() != 0 && characterStats.CurrStamina.GetCurrStat() < 0 )
+        {
+            //SHOW NEGATIVE VALUE (MAYBE MAKE GUAGE RED AND INVERT DIRECTION?)
+            staminaBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.NegativeStaminaColor;
+            staminaRemaining = -(float)characterStats.CurrStamina.GetCurrStat() / (float)characterStats.MaxStamina.GetCurrStat();
+        }
+        else if(characterStats.MaxStamina.GetCurrStat() != 0)
+        {
+            staminaBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.PositiveStaminaColor;
+            staminaRemaining = (float)characterStats.CurrStamina.GetCurrStat() / (float)characterStats.MaxStamina.GetCurrStat();
+        }
+        staminaBar.transform.localScale = new Vector3(staminaRemaining, staminaBar.transform.localScale.y, staminaBar.transform.localScale.z);
+        
+        //Element
+        var elementBar = CharacterInfoMenu.transform.GetChild(0).GetChild(3).Find("ElementBarScale");
+        var elementText = CharacterInfoMenu.transform.GetChild(0).GetChild(3).Find("ElementText").GetComponent<TextMeshProUGUI>();
+        elementText.text = characterStats.CurrElement.GetCurrStat() + "/" + characterStats.MaxElement.GetCurrStat();
+        float elementRemaining = 0;
+        if(characterStats.MaxElement.GetCurrStat() != 0 && characterStats.CurrElement.GetCurrStat() < 0 )
+        {
+            //SHOW NEGATIVE VALUE (MAYBE MAKE GUAGE RED AND INVERT DIRECTION?)
+            elementBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.NegativeElementColor;
+            elementRemaining = -(float)characterStats.CurrElement.GetCurrStat() / (float)characterStats.MaxElement.GetCurrStat();
+        }
+        else if(characterStats.MaxElement.GetCurrStat() != 0)
+        {
+            elementBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.PositiveElementColor;
+            elementRemaining = (float)characterStats.CurrElement.GetCurrStat() / (float)characterStats.MaxElement.GetCurrStat();
+        }
+        elementBar.transform.localScale = new Vector3(elementRemaining, elementBar.transform.localScale.y, elementBar.transform.localScale.z);
+
+        //Stance
+        var stanceBar = CharacterInfoMenu.transform.GetChild(0).GetChild(4).Find("StanceBarScale");
+        float stanceRemaining = 0;
+        if(characterStats.MaxStance.GetCurrStat() != 0)
+        {
+            stanceRemaining = (float)characterStats.CurrStance.GetCurrStat() / (float)characterStats.MaxStance.GetCurrStat();
+        }
+        stanceBar.transform.localScale = new Vector3(stanceRemaining, stanceBar.transform.localScale.y, stanceBar.transform.localScale.z);
+
+        //Update portrait
+    }
+
+    #endregion
+
+    #region Damage Log
+
+    public void AddToDamageLog(string newLog)
+    {
+        BattleLogText.text += "\n * " + newLog;
+    }
+
     #endregion
 }

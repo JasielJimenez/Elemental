@@ -44,11 +44,18 @@ public class Stat
     }
     #endregion
 
-    public void UpdateCurrStat(int change)
+    public void UpdateCurrStat(int change, bool positiveStat)
     {
-        if(currStat + change < 0)
+        if(positiveStat)
         {
-            currStat = 0;
+            if(currStat + change < 0)
+            {
+                currStat = 0;
+            }
+            else
+            {
+                currStat = currStat + change;
+            }
         }
         else
         {

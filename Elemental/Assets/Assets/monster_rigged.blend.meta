@@ -1,81 +1,224 @@
 fileFormatVersion: 2
 guid: 61b40ed3fd5fd4a47a245c0c3878fbcf
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: Armature
-    100002: Back
-    100004: Bone_017
-    100006: Head_Top
-    100008: HeadBack
-    100010: HeadMiddle
-    100012: Hip_L
-    100014: Hip_R
-    100016: Jaw
-    100018: L_Foot
-    100020: L_Hand
-    100022: L_LowerArm
-    100024: L_LowerLeg
-    100026: L_Shoulder
-    100028: L_UpperArm
-    100030: L_UpperLeg
-    100032: LowerBody
-    100034: //RootNode
-    100036: Neck
-    100038: R_Foot
-    100040: R_Hand
-    100042: R_LowerArm
-    100044: R_LowerLeg
-    100046: R_Shoulder
-    100048: R_UpperArm
-    100050: R_UpperLeg
-    100052: Rear
-    100054: Sphere_000
-    100056: TailTip
-    100058: UpperBody
-    400000: Armature
-    400002: Back
-    400004: Bone_017
-    400006: Head_Top
-    400008: HeadBack
-    400010: HeadMiddle
-    400012: Hip_L
-    400014: Hip_R
-    400016: Jaw
-    400018: L_Foot
-    400020: L_Hand
-    400022: L_LowerArm
-    400024: L_LowerLeg
-    400026: L_Shoulder
-    400028: L_UpperArm
-    400030: L_UpperLeg
-    400032: LowerBody
-    400034: //RootNode
-    400036: Neck
-    400038: R_Foot
-    400040: R_Hand
-    400042: R_LowerArm
-    400044: R_LowerLeg
-    400046: R_Shoulder
-    400048: R_UpperArm
-    400050: R_UpperLeg
-    400052: Rear
-    400054: Sphere_000
-    400056: TailTip
-    400058: UpperBody
-    2100000: None__monster_colored_psd
-    4300000: Sphere_000
-    7400000: Default Take
-    7400002: Attack
-    7400004: Flinch
-    7400006: Idle
-    7400008: Roar
-    9500000: //RootNode
-    13700000: Sphere_000
-    2186277476908879412: ImportLogs
+  serializedVersion: 20200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Armature
+  - first:
+      1: 100002
+    second: Back
+  - first:
+      1: 100004
+    second: Bone_017
+  - first:
+      1: 100006
+    second: Head_Top
+  - first:
+      1: 100008
+    second: HeadBack
+  - first:
+      1: 100010
+    second: HeadMiddle
+  - first:
+      1: 100012
+    second: Hip_L
+  - first:
+      1: 100014
+    second: Hip_R
+  - first:
+      1: 100016
+    second: Jaw
+  - first:
+      1: 100018
+    second: L_Foot
+  - first:
+      1: 100020
+    second: L_Hand
+  - first:
+      1: 100022
+    second: L_LowerArm
+  - first:
+      1: 100024
+    second: L_LowerLeg
+  - first:
+      1: 100026
+    second: L_Shoulder
+  - first:
+      1: 100028
+    second: L_UpperArm
+  - first:
+      1: 100030
+    second: L_UpperLeg
+  - first:
+      1: 100032
+    second: LowerBody
+  - first:
+      1: 100034
+    second: //RootNode
+  - first:
+      1: 100036
+    second: Neck
+  - first:
+      1: 100038
+    second: R_Foot
+  - first:
+      1: 100040
+    second: R_Hand
+  - first:
+      1: 100042
+    second: R_LowerArm
+  - first:
+      1: 100044
+    second: R_LowerLeg
+  - first:
+      1: 100046
+    second: R_Shoulder
+  - first:
+      1: 100048
+    second: R_UpperArm
+  - first:
+      1: 100050
+    second: R_UpperLeg
+  - first:
+      1: 100052
+    second: Rear
+  - first:
+      1: 100054
+    second: Sphere_000
+  - first:
+      1: 100056
+    second: TailTip
+  - first:
+      1: 100058
+    second: UpperBody
+  - first:
+      4: 400000
+    second: Armature
+  - first:
+      4: 400002
+    second: Back
+  - first:
+      4: 400004
+    second: Bone_017
+  - first:
+      4: 400006
+    second: Head_Top
+  - first:
+      4: 400008
+    second: HeadBack
+  - first:
+      4: 400010
+    second: HeadMiddle
+  - first:
+      4: 400012
+    second: Hip_L
+  - first:
+      4: 400014
+    second: Hip_R
+  - first:
+      4: 400016
+    second: Jaw
+  - first:
+      4: 400018
+    second: L_Foot
+  - first:
+      4: 400020
+    second: L_Hand
+  - first:
+      4: 400022
+    second: L_LowerArm
+  - first:
+      4: 400024
+    second: L_LowerLeg
+  - first:
+      4: 400026
+    second: L_Shoulder
+  - first:
+      4: 400028
+    second: L_UpperArm
+  - first:
+      4: 400030
+    second: L_UpperLeg
+  - first:
+      4: 400032
+    second: LowerBody
+  - first:
+      4: 400034
+    second: //RootNode
+  - first:
+      4: 400036
+    second: Neck
+  - first:
+      4: 400038
+    second: R_Foot
+  - first:
+      4: 400040
+    second: R_Hand
+  - first:
+      4: 400042
+    second: R_LowerArm
+  - first:
+      4: 400044
+    second: R_LowerLeg
+  - first:
+      4: 400046
+    second: R_Shoulder
+  - first:
+      4: 400048
+    second: R_UpperArm
+  - first:
+      4: 400050
+    second: R_UpperLeg
+  - first:
+      4: 400052
+    second: Rear
+  - first:
+      4: 400054
+    second: Sphere_000
+  - first:
+      4: 400056
+    second: TailTip
+  - first:
+      4: 400058
+    second: UpperBody
+  - first:
+      21: 2100000
+    second: None__monster_colored_psd
+  - first:
+      43: 4300000
+    second: Sphere_000
+  - first:
+      74: 7400000
+    second: Default Take
+  - first:
+      74: 7400002
+    second: Attack
+  - first:
+      74: 7400004
+    second: Flinch
+  - first:
+      74: 7400006
+    second: Idle
+  - first:
+      74: 7400008
+    second: Roar
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Sphere_000
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
+  - first:
+      74: -623603649343465320
+    second: Scene
   externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -108,25 +251,32 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -135,10 +285,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -148,13 +298,17 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

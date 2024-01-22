@@ -38,8 +38,8 @@ public class CharacterAttacks : MonoBehaviour
 
     public void buildMovePool()
     {
-        AttackOne = attackDatabase.GetComponent<AttackImporter>().attackDatabase[attackOnePick];
-        AttackTwo = attackDatabase.GetComponent<AttackImporter>().attackDatabase[attackTwoPick];
+        AttackOne = attackDatabase.GetComponent<AttackImporter>().AttackDatabaseList[attackOnePick];
+        AttackTwo = attackDatabase.GetComponent<AttackImporter>().AttackDatabaseList[attackTwoPick];
     }
 
     // Update is called once per frame

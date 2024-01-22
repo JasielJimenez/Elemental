@@ -8,7 +8,7 @@ public class DemoClick : MonoBehaviour
 {
     public GameObject SelectedObject;
     public bool PlayerTurn;
-    public bool IsWalkingPhase;
+    public bool ClickDisabled;
     public bool IsCurrentlyMoving;
     public enum SelectObjectEnum
     {
@@ -27,14 +27,14 @@ public class DemoClick : MonoBehaviour
     void Start()
     {
         PlayerTurn = true;
-        IsWalkingPhase = false;
+        ClickDisabled = false;
         IsCurrentlyMoving = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(PlayerTurn == true && IsWalkingPhase == false)
+        if(PlayerTurn == true && ClickDisabled == false)
         {
             if(SelectedObject != null)
             {
@@ -69,7 +69,12 @@ public class DemoClick : MonoBehaviour
                         var battleMenu = this.GetComponent<BattleMenuButtons>();
                         battleMenu.SelectedObject = SelectedObject;
                         CheckAvailableActions();
-                        battleMenu.PlayerMenu.SetActive(true);
+                        battleMenu.ToggleMenu(nameof(battleMenu.PlayerMenu),true);
+                        battleMenu.ToggleMenu(nameof(battleMenu.ActionsMenu),true);
+                        battleMenu.ToggleMenu(nameof(battleMenu.WalkMenu),false);
+                        battleMenu.ToggleMenu(nameof(battleMenu.SkillsMenu),false);
+                        battleMenu.ToggleMenu(nameof(battleMenu.CharacterInfoMenu),true);
+                        this.GetComponent<CombatManager>().SetAttacker(SelectedObject);
                         //Show selection circle
                         SelectedObject.transform.GetChild(1).gameObject.SetActive(true);
                     }
@@ -83,7 +88,9 @@ public class DemoClick : MonoBehaviour
                         //Hide player menu
                         var battleMenu = this.GetComponent<BattleMenuButtons>();
                         battleMenu.SelectedObject = SelectedObject;
-                        battleMenu.PlayerMenu.SetActive(false);
+                        battleMenu.ToggleMenu("PlayerMenu",false);
+                        battleMenu.ToggleMenu(nameof(battleMenu.CharacterInfoMenu),true);
+                        this.GetComponent<CombatManager>().SetAttacker(SelectedObject);
                         //Show selection circle
                         SelectedObject.transform.GetChild(1).gameObject.SetActive(true);
                     }
@@ -97,14 +104,22 @@ public class DemoClick : MonoBehaviour
                         //Hide player menu
                         var battleMenu = this.GetComponent<BattleMenuButtons>();
                         battleMenu.SelectedObject = SelectedObject;
-                        battleMenu.PlayerMenu.SetActive(false);
+                        battleMenu.ToggleMenu("PlayerMenu",false);
+                        battleMenu.ToggleMenu(nameof(battleMenu.CharacterInfoMenu),true);
+                        this.GetComponent<CombatManager>().SetAttacker(SelectedObject);
                         //Show selection circle
                         SelectedObject.transform.GetChild(1).gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        //NEEDS SOME FINE TUNING
+                        //Deselect current character when not clicking on a character
+                        DeselectCurrentObject();
                     }
                 }
             }
         }
-        else if(IsWalkingPhase == true && CurrentSelection == SelectObjectEnum.Player)
+        else if(ClickDisabled == true && CurrentSelection == SelectObjectEnum.Player)
         {
             //This is for handling point + click for moving a character
             if(!IsCurrentlyMoving)
@@ -152,29 +167,33 @@ public class DemoClick : MonoBehaviour
         }
     }
 
+    //PERHAPS MOVE THIS TO TURNORDER?
     public void CheckAvailableActions()
     {
         if(SelectedObject != null)
         {
             var character = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
-            if(character.HasWalked && character.HasActed)
+            if((character.HasWalked && character.HasActed) || character.isDowned)
             {
                 //DEACTIVATE ALL BUTTONS
                 this.GetComponent<BattleMenuButtons>().ToggleWalkButton(false);
                 this.GetComponent<BattleMenuButtons>().ToggleActionButtons(false);
                 this.GetComponent<BattleMenuButtons>().ToggleEndTurnButton(false);
+                //this.GetComponent<BattleMenuButtons>().ActionsMenu.SetActive(false);
             }
             else if(character.HasWalked)
             {
                 //DEACTIVATE WALK BUTTON
                 this.GetComponent<BattleMenuButtons>().ToggleWalkButton(false);
                 this.GetComponent<BattleMenuButtons>().ToggleActionButtons(true);
+                this.GetComponent<BattleMenuButtons>().ToggleMenu("ActionsMenu",true);
             }
             else if(character.HasActed)
             {
                 //DEACTIVATE ALL BUTTONS BUT WALK
                 this.GetComponent<BattleMenuButtons>().ToggleWalkButton(true);
                 this.GetComponent<BattleMenuButtons>().ToggleActionButtons(false);
+                this.GetComponent<BattleMenuButtons>().ToggleMenu("ActionsMenu",true);
             }
             else
             {
@@ -208,8 +227,26 @@ public class DemoClick : MonoBehaviour
     {
         if(SelectedObject != null)
         {
+            var battleMenuButtons = this.GetComponent<BattleMenuButtons>();
+            ClickDisabled = false;
+            battleMenuButtons.ToggleMenu("PlayerMenu",false);
+            battleMenuButtons.ToggleMenu("CharacterInfoMenu",false);
+            //ToggleMenu("CharacterInfoMenu",false);
+
+            if(battleMenuButtons.WalkMenu.activeSelf)
+            {
+                battleMenuButtons.CancelWalk();
+            }
+            if(battleMenuButtons.AttackMenu.activeSelf)
+            {
+                battleMenuButtons.CancelAttack();
+            }
+
             SelectedObject.transform.GetChild(1).gameObject.SetActive(false);
             SelectedObject = null;
+            battleMenuButtons.SelectedObject = null;
+            this.GetComponent<CombatManager>().SetAttacker(null);
+            //this.GetComponent<BattleMenuButtons>().ToggleMenu("CharacterInfoMenu",false);
         }
     }
 }

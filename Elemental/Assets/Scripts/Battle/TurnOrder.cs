@@ -8,7 +8,8 @@ public class TurnOrder : MonoBehaviour
     public enum CurrTurnEnum
     {
         Player,
-        Enemy
+        Enemy,
+        End
     }
     public CurrTurnEnum CurrentTurn = CurrTurnEnum.Player;
 
@@ -70,6 +71,7 @@ public class TurnOrder : MonoBehaviour
                 TurnText.text = "ENEMY TURN";
                 CurrentTurnText.text = "ENEMY TURN";
                 cam.GetComponent<CameraMovement>().DisableMove();
+                this.GetComponent<BattleMenuButtons>().AddToDamageLog("ENEMY TURN");
                 StartCoroutine(DisplayTurnChangeText(CurrentTurn));
                 //HandleEnemyTurn();
             break;
@@ -82,7 +84,11 @@ public class TurnOrder : MonoBehaviour
                 TurnText.text = "PLAYER TURN";
                 CurrentTurnText.text = "PLAYER TURN";
                 cam.GetComponent<CameraMovement>().EnableMove();
+                this.GetComponent<BattleMenuButtons>().AddToDamageLog("PLAYER TURN");
                 StartCoroutine(DisplayTurnChangeText(CurrentTurn));
+            break;
+            case CurrTurnEnum.End:
+                this.GetComponent<BattleMenuButtons>().AddToDamageLog("BLAH");
             break;
             default:
                 Debug.Log("ERROR: NOBODY'S TURN");
@@ -94,24 +100,27 @@ public class TurnOrder : MonoBehaviour
 
     ///Changes display text for a few seconds to show whose turn it is
     ///Then starts enemy's turn or player's turn
-    IEnumerator DisplayTurnChangeText(CurrTurnEnum test)
+    IEnumerator DisplayTurnChangeText(CurrTurnEnum turn)
     {
         ChangeTurnWindow.SetActive(true);
         yield return new WaitForSeconds(2);
         ChangeTurnWindow.SetActive(false);
 
-        if(test == CurrTurnEnum.Enemy)
+        if(turn == CurrTurnEnum.Enemy)
         {
-            //First enemy's IsSelected circle glows
-            EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(1).gameObject.SetActive(true);
-            //First enemy's turn starts
-            EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(0).gameObject.GetComponent<EnemyBehaviour>().ChooseBestAttack();
+            CurrentEnemyActs();
         }
         else
         {
             this.GetComponent<DemoClick>().PlayerTurn = true;
             UpdateCharacters();
         }
+    }
+
+    public void HandleTurnAction()
+    {
+        //On attack pressed, go here?
+
     }
 
     ///After an enemy has their turn, checks to see if there are other enemies who have yet to act
@@ -124,15 +133,26 @@ public class TurnOrder : MonoBehaviour
         CurrentEnemyIndex++;
         if(CurrentEnemyIndex < NumEnemies)
         {
-            //Next enemy's turn starts
-            EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(1).gameObject.SetActive(true);
-            //Next enemy's turn starts
-            EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).GetChild(0).gameObject.GetComponent<EnemyBehaviour>().ChooseBestAttack();
+            CurrentEnemyActs();
         }
         else
         {
             CurrentEnemyIndex = 0;
             ChangeTurn();
+        }
+    }
+
+    private void CurrentEnemyActs()
+    {
+        if(NumEnemies > 0)
+        {
+            Debug.Log("Enemies remaining: " + NumEnemies);
+            var enemy = EnemyList.transform.GetChild(CurrentEnemyIndex).GetChild(0).gameObject;
+            this.GetComponent<CombatManager>().SetAttacker(enemy);
+            //Next enemy's turn starts
+            enemy.transform.GetChild(1).gameObject.SetActive(true);
+            //Next enemy's turn starts
+            enemy.transform.GetChild(0).gameObject.GetComponent<EnemyBehaviour>().ChooseBestAttack();
         }
     }
 
@@ -156,8 +176,12 @@ public class TurnOrder : MonoBehaviour
             var character = currCharacter.GetChild(1);
             walkCircle.transform.position = new Vector3(character.position.x, walkCircle.position.y, character.position.z);
 
-            character.GetChild(0).gameObject.GetComponent<CharacterStats>().HasActed = false;
-            character.GetChild(0).gameObject.GetComponent<CharacterStats>().HasWalked = false;
+            var characterStats = character.GetChild(0).gameObject.GetComponent<CharacterStats>();
+            characterStats.HasActed = false;
+            characterStats.HasWalked = false;
+
+            characterStats.ChangeStat(20,"CurrStamina", false);
+            characterStats.ChangeStat(20,"CurrElement", false);
         }
     }
 
@@ -168,6 +192,17 @@ public class TurnOrder : MonoBehaviour
         if(PlayerActionsRemaining <= 0)
         {
             ChangeTurn();
+        }
+    }
+
+    public void CheckEndOfBattle()
+    {
+        Debug.Log("Enemies left: " + NumEnemies);
+        if(NumEnemies <= 0)
+        {
+            CurrentTurn = CurrTurnEnum.End;
+            TurnText.text = "VICTORY";
+            ChangeTurnWindow.SetActive(true);
         }
     }
 
