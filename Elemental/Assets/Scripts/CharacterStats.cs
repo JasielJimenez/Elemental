@@ -64,6 +64,7 @@ public class CharacterStats : MonoBehaviour
     //public List<StatNames> AllStatChanges = new List<StatChange>();
     //public List<Attack> AttackList = new List<Attack>();
     public GameObject BattleManager;
+    private Animator Anim;
 
     public List<StatChange> AllStatChanges = new List<StatChange>();
     public Dictionary<string,int> EnmityList = new Dictionary<string,int>();
@@ -78,6 +79,11 @@ public class CharacterStats : MonoBehaviour
         HasActed = false;
         HasWalked = false;
         //Debug.Log(hasAttacked);
+
+        //if(transform.childCount >= 5)
+        //{
+            Anim = transform.parent.GetChild(4)?.GetComponent<Animator>();
+        //}
 
         //RACE CONDITION? <-------------------------------------------------------------------------------------------
 
@@ -239,6 +245,19 @@ public class CharacterStats : MonoBehaviour
             default:
                 Debug.Log("Invalid stat name given to be changed");
             break;
+        }
+    }
+
+    public void SetAnimation(string parameterName)
+    {
+        if(Anim != null)
+        {
+            Debug.Log(CharacterName + " Animator is not null: " + Anim);
+            Anim.SetTrigger(parameterName);
+        }
+        else
+        {
+            Debug.Log(CharacterName + " Animator null: " + Anim);
         }
     }
 

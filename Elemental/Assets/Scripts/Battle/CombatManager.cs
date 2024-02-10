@@ -117,6 +117,7 @@ public class CombatManager : MonoBehaviour
                 {
                     this.GetComponent<BattleMenuButtons>().AddToDamageLog(opponentStats.CharacterName + " dodged the attack!");
                     Debug.Log("MISSED! Attack Acc: " + CurrAttack.Accuracy + " < Target Evasion: " + opponentStats.Evasion.GetCurrStat());
+                    opponentStats.SetAnimation("Evade");
                     continue;
                 }
                 #endregion
@@ -132,6 +133,7 @@ public class CombatManager : MonoBehaviour
                 {
                     this.GetComponent<BattleMenuButtons>().AddToDamageLog(opponentStats.CharacterName + " blocked the attack!");
                     Debug.Log("BLOCKED!");
+                    opponentStats.SetAnimation("Block");
                     //hide potential damage bar
                     target.transform.GetChild(3).GetChild(0).GetChild(1).gameObject.SetActive(false);
                     //hide target circle
@@ -160,6 +162,7 @@ public class CombatManager : MonoBehaviour
                 {
                     healthRemaining = (float)opponentStats.CurrHealth.GetCurrStat() / (float)opponentStats.MaxHealth.GetCurrStat();
                     target.transform.GetChild(3).gameObject.GetComponent<Healthbar>().UpdateHealthBar(healthRemaining);
+                    opponentStats.SetAnimation("Hit");
                     //PLAY DAMAGED ANIMATION
                 }
                 else
@@ -169,7 +172,9 @@ public class CombatManager : MonoBehaviour
                     {
                         this.GetComponent<BattleMenuButtons>().AddToDamageLog(opponentStats.CharacterName + " was defeated!");
                         //PLAY DEAD ANIMATION
-                        Destroy(target.transform.parent.gameObject);
+                        opponentStats.SetAnimation("Dead");
+                        //ADD SOME DELAY
+                        //Destroy(target.transform.parent.gameObject);
                         this.GetComponent<TurnOrder>().NumEnemies--;
                         this.GetComponent<TurnOrder>().CheckEndOfBattle();
                     }
@@ -283,6 +288,9 @@ public class CombatManager : MonoBehaviour
 		}
 		yield return new WaitForSeconds(2);
         CurrAttack = currAttack;
+
+        //SEND NUMBER FOR SPECIFIC ATTACK ANIMATIONS?
+        AttackerStats.SetAnimation("Attack");
 		DamageStep();
         //Debug.Log("Attack Finished");
        	yield return new WaitForSeconds(1);
