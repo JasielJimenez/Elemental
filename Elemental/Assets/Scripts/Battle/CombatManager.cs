@@ -91,6 +91,7 @@ public class CombatManager : MonoBehaviour
         DamageList.RemoveAt(index);
     }
 
+    //Called from AnimationEventHandler.cs during animation
     public void DamageStep()
     {
         //Debug.Log("(BuffBeenApplied = " + BuffBeenApplied + ")");
@@ -210,17 +211,18 @@ public class CombatManager : MonoBehaviour
             Debug.Log("ERROR: There were " +  TargetsInRange.Count + " targets, while there were " + DamageList.Count + " damages calculated.");
         }
         HandleCharacterCombatMovement();
-        DeleteAttackRange();
+        //DeleteAttackRange();
     }
 
     #endregion
 
     #region Handle Timing
 
+    #region Player Timing
     public void PlayerAction()
     {
         StartCoroutine(DemoPlayerTurn(0));
-        Debug.Log("Check enumerator");
+        //Debug.Log("Check enumerator");
     }
 
     IEnumerator DemoPlayerTurn(int attackNum)
@@ -233,11 +235,13 @@ public class CombatManager : MonoBehaviour
         //PARTICLE DURING DAMAGE
         //TARGET ANIMATION DURING DAMAGE
         DamageStep();
-        this.GetComponent<BattleMenuButtons>().UpdateCharacterHudMenu();
-        DeleteAttackRange();
-        Debug.Log("Enumerator");
+
+        //this.GetComponent<BattleMenuButtons>().UpdateCharacterHudMenu();
+        
+        //Debug.Log("Enumerator");
         yield return new WaitForSeconds(1);
-        Debug.Log("Enumerator after one second");
+        DeleteAttackRange();
+        //Debug.Log("Enumerator after one second");
         //PARTICLE AFTER DAMAGE
         ////USER/TARGET ANIMATION AFTER DAMAGE
         this.GetComponent<BattleMenuButtons>().Cam.GetComponent<CameraMovement>().EnableMove();
@@ -248,6 +252,9 @@ public class CombatManager : MonoBehaviour
         BuffBeenApplied = false;
         yield return new WaitForSeconds(0);
     }
+
+    #endregion
+    #region Enemy Timing
 
     public void EnemyTurn(int attackNum)
     {
@@ -264,13 +271,14 @@ public class CombatManager : MonoBehaviour
         var currAttack = AttackList[attackIndex];
         if(!IsChargingAttack)
         {
+            
             CreateEnemyAttackRange(currAttack);
             if(currAttack.IsCharge)
         	{
-				yield return new WaitForSeconds(2);
                 this.GetComponent<BattleMenuButtons>().AddToDamageLog(AttackerStats.CharacterName + " is charging...");
 				IsChargingAttack = true;
             	TurnsLeftOfCharge = currAttack.TurnsToCharge;
+                yield return new WaitForSeconds(2);
     			this.transform.GetComponent<TurnOrder>().HandleNextEnemyTurn();
 				yield break;
         	}
@@ -282,7 +290,7 @@ public class CombatManager : MonoBehaviour
 		else if(IsChargingAttack && TurnsLeftOfCharge > 0)
 		{
             this.GetComponent<BattleMenuButtons>().AddToDamageLog(AttackerStats.CharacterName + " is still charging...");
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(2);
 			this.transform.GetComponent<TurnOrder>().HandleNextEnemyTurn();
 			yield break;
 		}
@@ -291,20 +299,43 @@ public class CombatManager : MonoBehaviour
 
         //SEND NUMBER FOR SPECIFIC ATTACK ANIMATIONS?
         AttackerStats.SetAnimation("Attack");
-		DamageStep();
+
+        //NOW HANDLED IN ANIMATIONS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        //yield return new WaitForSeconds(1);
+		//DamageStep();
         //Debug.Log("Attack Finished");
-       	yield return new WaitForSeconds(1);
+        //WAIT FOR ANIMATION TO FINISH (GET LENGTH OF ANIMATION)
+       	//yield return new WaitForSeconds(1.5f);
+        //DeleteAttackRange();
+		//IsChargingAttack = false;
+        //this.transform.GetComponent<TurnOrder>().HandleNextEnemyTurn();
+    }
+
+    //Called from AnimationEventHandler.cs during animation
+    public void EndOfAttack()
+    {
+        StartCoroutine(DelayBeforeNextTurn());
+    }
+
+    IEnumerator DelayBeforeNextTurn()
+    {
+        yield return new WaitForSeconds(.8f);
+        //Maybe hide hitbox render and then delete after delay?
+        DeleteAttackRange();
 		IsChargingAttack = false;
         this.transform.GetComponent<TurnOrder>().HandleNextEnemyTurn();
     }
 
+    #endregion
+    
     #endregion
 
     #region Handle Particle Effects
 
     public void TestParticleEffects(GameObject particles)
     {
-        Debug.Log("CREATE PARTICLES");
+        //Debug.Log("CREATE PARTICLES");
         Vector3 test = new Vector3(CurrAttackRange.transform.position.x, CurrAttackRange.transform.position.y + 1, CurrAttackRange.transform.position.z);
         var particle = Instantiate(particles, CurrAttackRange.transform.position, CurrAttackRange.transform.rotation);
         //StartCoroutine(DespawnParticle(2, particle));
@@ -384,11 +415,11 @@ public class CombatManager : MonoBehaviour
     {
         if(CurrAttack.WillMovePlayer)
         {
-            Debug.Log(Attacker.transform.forward);
+            //Debug.Log(Attacker.transform.forward);
             var xDirection = Attacker.transform.forward.x * CurrAttack.MovePlayerDistance;
-            Debug.Log("X: " + xDirection);
+            //Debug.Log("X: " + xDirection);
             var zDirection = Attacker.transform.forward.z * CurrAttack.MovePlayerDistance;
-            Debug.Log("Z: " + zDirection);
+            //Debug.Log("Z: " + zDirection);
             Attacker.transform.position += new Vector3(xDirection, 0, zDirection);
 
             //Moves walk circle to new character location
@@ -425,6 +456,8 @@ public class CombatManager : MonoBehaviour
     {
         CurrAttackRange = Instantiate(range, rangePosition, Attacker.transform.rotation);
         CurrAttackRange.transform.SetParent(Attacker.transform, true);
+        //Call SetUser() in AttackParticles.cs
+        CurrAttackRange.transform.GetChild(1).GetComponent<AttackParticles>()?.SetUser(Attacker);
     }
 
     public void DeleteAttackRange()

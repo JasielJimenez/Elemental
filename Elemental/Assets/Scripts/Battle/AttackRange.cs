@@ -14,7 +14,9 @@ public class AttackRange : MonoBehaviour
     void Start()
     {
         BattleManager = GameObject.Find("DemoBattleManager");
-        AttackOwnerTag = this.transform.parent.parent.gameObject.tag;
+        var attackRanges = this.transform.parent;
+        Debug.Log(attackRanges);
+        AttackOwnerTag = attackRanges.parent.gameObject.tag;
     }
 
     // Update is called once per frame
@@ -27,6 +29,8 @@ public class AttackRange : MonoBehaviour
     {
         //PREVENT FRIENDLY FIRE! Maybe check to see who it is coming from and if it is a damaging attack
         var targetTag = collider.gameObject.tag;
+        Debug.Log("TargetTag: " + targetTag);
+        Debug.Log("AttackerOwnerTag: " + AttackOwnerTag);
         if(!ColliderList.Contains(collider.gameObject) && targetTag != AttackOwnerTag)
         {
             if (targetTag == "Enemy" || targetTag == "EnvironmentObject" || targetTag == "Player")

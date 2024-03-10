@@ -56,7 +56,35 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.08053691
+        functionName: AttackParticleHandler
+        data: Charge
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.754717
+        functionName: AttackDealDamage
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.990566
+        functionName: AttackAnimationEnd
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.6698113
+        functionName: AttackParticleHandler
+        data: FireShot
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -207,7 +235,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Move
+      name: Drone_Move
       takeName: Armature|Drone_Move
       internalID: -8669401144301755209
       firstFrame: 0
@@ -236,7 +264,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Start
+      name: Drone_Start
       takeName: Armature|Drone_Start
       internalID: 1775923607255347166
       firstFrame: 0
@@ -265,7 +293,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Status
+      name: Drone_Status
       takeName: Armature|Drone_Status
       internalID: -3993830870739159208
       firstFrame: 0
@@ -294,7 +322,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Stun
+      name: Drone_Stun
       takeName: Armature|Drone_Stun
       internalID: -1491278777415960820
       firstFrame: 0
@@ -323,7 +351,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Topple
+      name: Drone_Topple
       takeName: Armature|Drone_Topple
       internalID: -2975952440475744084
       firstFrame: 0
@@ -352,7 +380,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Topple_Hit
+      name: Drone_Topple_Hit
       takeName: Armature|Drone_Topple_Hit
       internalID: 4741710103702208599
       firstFrame: 0
@@ -381,7 +409,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Topple_Idle
+      name: Drone_Topple_Idle
       takeName: Armature|Drone_Topple_Idle
       internalID: 2091084515639386229
       firstFrame: 0
@@ -410,7 +438,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Drone_Turn
+      name: Drone_Turn
       takeName: Armature|Drone_Turn
       internalID: 8922963563827843139
       firstFrame: 0

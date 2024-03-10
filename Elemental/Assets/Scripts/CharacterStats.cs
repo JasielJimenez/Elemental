@@ -252,12 +252,12 @@ public class CharacterStats : MonoBehaviour
     {
         if(Anim != null)
         {
-            Debug.Log(CharacterName + " Animator is not null: " + Anim);
+            //Debug.Log(CharacterName + " Animator is not null: " + Anim);
             Anim.SetTrigger(parameterName);
         }
         else
         {
-            Debug.Log(CharacterName + " Animator null: " + Anim);
+            //Debug.Log(CharacterName + " Animator null: " + Anim);
         }
     }
 

@@ -63,7 +63,7 @@ public class DemoClick : MonoBehaviour
                         //Select player, open player menu, and show player stats (DOESN'T SHOW PLAYER STATS YET)
                         DeselectCurrentObject();
                         SelectedObject = hit.transform.gameObject;
-                        Debug.Log("Player selected");
+                        //Debug.Log("Player selected");
                         CurrentSelection = SelectObjectEnum.Player;
                         //Show player menu
                         var battleMenu = this.GetComponent<BattleMenuButtons>();
@@ -83,7 +83,7 @@ public class DemoClick : MonoBehaviour
                         //Select enemy and display enemy stats, abilities, etc (DOESN'T SHOW ENEMY STATS YET)
                         DeselectCurrentObject();
                         SelectedObject = hit.transform.gameObject;
-                        Debug.Log("Enemy selected");
+                        //Debug.Log("Enemy selected");
                         CurrentSelection = SelectObjectEnum.Enemy;
                         //Hide player menu
                         var battleMenu = this.GetComponent<BattleMenuButtons>();
@@ -99,7 +99,7 @@ public class DemoClick : MonoBehaviour
                         //Select object and display object stats (DOESN'T SHOW OBJECT STATS YET)
                         DeselectCurrentObject();
                         SelectedObject = hit.transform.gameObject;
-                        Debug.Log("Object selected");
+                        //Debug.Log("Object selected");
                         CurrentSelection = SelectObjectEnum.Object;
                         //Hide player menu
                         var battleMenu = this.GetComponent<BattleMenuButtons>();
@@ -173,6 +173,7 @@ public class DemoClick : MonoBehaviour
         if(SelectedObject != null)
         {
             var character = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
+            //Debug.Log(character.CharacterName + " is down: " + character.isDowned);
             if((character.HasWalked && character.HasActed) || character.isDowned)
             {
                 //DEACTIVATE ALL BUTTONS

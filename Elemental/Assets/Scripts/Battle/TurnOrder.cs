@@ -179,6 +179,7 @@ public class TurnOrder : MonoBehaviour
             var characterStats = character.GetChild(0).gameObject.GetComponent<CharacterStats>();
             characterStats.HasActed = false;
             characterStats.HasWalked = false;
+            Debug.Log(characterStats.CharacterName + ": has Acted = " + characterStats.HasActed + " | has Walked = " + characterStats.HasWalked);
 
             characterStats.ChangeStat(20,"CurrStamina", false);
             characterStats.ChangeStat(20,"CurrElement", false);

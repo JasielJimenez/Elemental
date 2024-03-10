@@ -13,6 +13,7 @@ public class BattleMenuButtons : MonoBehaviour
     public GameObject ActionsMenu;
     public GameObject WalkMenu;
     public GameObject CharacterInfoMenu;
+    public GameObject StatsHud;
     public GameObject AttackMenu;
     public GameObject SkillsMenu;
     public GameObject EndTurnMenu;
@@ -44,6 +45,8 @@ public class BattleMenuButtons : MonoBehaviour
         EndTurnMenu = PlayerMenu.transform.GetChild(4).gameObject;
 
         CharacterInfoMenu = BattleMenu.transform.GetChild(2).gameObject;
+        StatsHud = CharacterInfoMenu.transform.Find("StatsHud").gameObject;
+        ToggleMenu(nameof(StatsHud),false);
         ToggleMenu(nameof(CharacterInfoMenu),false);
 
         BattleLog = GameObject.Find("BattleLog");
@@ -110,6 +113,9 @@ public class BattleMenuButtons : MonoBehaviour
             break;
             case "UseSkillFive":
             UseSkill(5);
+            break;
+            case "ToggleStatsHud":
+            ToggleStatsHud();
             break;
             default:
             Debug.Log("Invalid name for button");
@@ -312,8 +318,11 @@ public class BattleMenuButtons : MonoBehaviour
             CharacterInfoMenu.SetActive(toggle);
             if(toggle)
             {
-                UpdateCharacterHudMenu();
+                this.GetComponent<CharacterHud>().UpdateCharacterHudMenu(SelectedObject);
             }
+            break;
+            case nameof(StatsHud):
+            StatsHud.SetActive(toggle);
             break;
             case nameof(AttackMenu):
             AttackMenu.SetActive(toggle);
@@ -399,67 +408,18 @@ public class BattleMenuButtons : MonoBehaviour
     }
     #endregion
 
-    #region CharacterInfoMenu
+    #region StatsHud
 
-    public void UpdateCharacterHudMenu()
+    public void ToggleStatsHud()
     {
-        var characterStats = SelectedObject.transform.GetChild(0).GetComponent<CharacterStats>();
-        var name = CharacterInfoMenu.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
-        name.text = characterStats.CharacterName;
-        
-        //Health
-        var healthBar = CharacterInfoMenu.transform.GetChild(0).GetChild(1).Find("HealthBarScale");
-        var healthText = CharacterInfoMenu.transform.GetChild(0).GetChild(1).Find("HealthText").GetComponent<TextMeshProUGUI>();
-        healthText.text = characterStats.CurrHealth.GetCurrStat() + "/" + characterStats.MaxHealth.GetCurrStat();
-        float healthRemaining = (float)characterStats.CurrHealth.GetCurrStat() / (float)characterStats.MaxHealth.GetCurrStat();
-        healthBar.transform.localScale = new Vector3(healthRemaining, healthBar.transform.localScale.y, healthBar.transform.localScale.z);
-
-        //Stamina
-        var staminaBar = CharacterInfoMenu.transform.GetChild(0).GetChild(2).Find("StaminaBarScale");
-        var staminaText = CharacterInfoMenu.transform.GetChild(0).GetChild(2).Find("StaminaText").GetComponent<TextMeshProUGUI>();
-        staminaText.text = characterStats.CurrStamina.GetCurrStat() + "/" + characterStats.MaxStamina.GetCurrStat();
-        float staminaRemaining = 0;
-        if(characterStats.MaxStamina.GetCurrStat() != 0 && characterStats.CurrStamina.GetCurrStat() < 0 )
+        if(StatsHud.activeSelf)
         {
-            //SHOW NEGATIVE VALUE (MAYBE MAKE GUAGE RED AND INVERT DIRECTION?)
-            staminaBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.NegativeStaminaColor;
-            staminaRemaining = -(float)characterStats.CurrStamina.GetCurrStat() / (float)characterStats.MaxStamina.GetCurrStat();
+            ToggleMenu(nameof(StatsHud),false);
         }
-        else if(characterStats.MaxStamina.GetCurrStat() != 0)
+        else
         {
-            staminaBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.PositiveStaminaColor;
-            staminaRemaining = (float)characterStats.CurrStamina.GetCurrStat() / (float)characterStats.MaxStamina.GetCurrStat();
+            ToggleMenu(nameof(StatsHud),true);
         }
-        staminaBar.transform.localScale = new Vector3(staminaRemaining, staminaBar.transform.localScale.y, staminaBar.transform.localScale.z);
-        
-        //Element
-        var elementBar = CharacterInfoMenu.transform.GetChild(0).GetChild(3).Find("ElementBarScale");
-        var elementText = CharacterInfoMenu.transform.GetChild(0).GetChild(3).Find("ElementText").GetComponent<TextMeshProUGUI>();
-        elementText.text = characterStats.CurrElement.GetCurrStat() + "/" + characterStats.MaxElement.GetCurrStat();
-        float elementRemaining = 0;
-        if(characterStats.MaxElement.GetCurrStat() != 0 && characterStats.CurrElement.GetCurrStat() < 0 )
-        {
-            //SHOW NEGATIVE VALUE (MAYBE MAKE GUAGE RED AND INVERT DIRECTION?)
-            elementBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.NegativeElementColor;
-            elementRemaining = -(float)characterStats.CurrElement.GetCurrStat() / (float)characterStats.MaxElement.GetCurrStat();
-        }
-        else if(characterStats.MaxElement.GetCurrStat() != 0)
-        {
-            elementBar.transform.GetChild(0).GetComponent<Image>().color = UIColors.PositiveElementColor;
-            elementRemaining = (float)characterStats.CurrElement.GetCurrStat() / (float)characterStats.MaxElement.GetCurrStat();
-        }
-        elementBar.transform.localScale = new Vector3(elementRemaining, elementBar.transform.localScale.y, elementBar.transform.localScale.z);
-
-        //Stance
-        var stanceBar = CharacterInfoMenu.transform.GetChild(0).GetChild(4).Find("StanceBarScale");
-        float stanceRemaining = 0;
-        if(characterStats.MaxStance.GetCurrStat() != 0)
-        {
-            stanceRemaining = (float)characterStats.CurrStance.GetCurrStat() / (float)characterStats.MaxStance.GetCurrStat();
-        }
-        stanceBar.transform.localScale = new Vector3(stanceRemaining, stanceBar.transform.localScale.y, stanceBar.transform.localScale.z);
-
-        //Update portrait
     }
 
     #endregion

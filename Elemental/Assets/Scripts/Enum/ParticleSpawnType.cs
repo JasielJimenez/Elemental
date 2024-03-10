@@ -5,6 +5,8 @@ using UnityEngine;
 public enum ParticleSpawnType
 {
     OnTargetPos,
+    OnTargetBones,
     FromUserPos,
+    FromUserBones,
     FromSpecificPos
 }
